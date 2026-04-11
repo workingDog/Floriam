@@ -23,10 +23,10 @@ import SwiftUI
     }
 
     func checkStatus() async {
-        if let url = URL(string: "\(baseURL)/_status/?api-key=\(apiKey)") {
+        if let url = URL(string: "\(baseURL)/_status") {
             do {
                 let (data, response) = try await URLSession.shared.data(from: url)
-                try validate(response: response, data: data)
+       //         try validate(response: response, data: data)
                 //     return try JSONDecoder().decode([xxx].self, from: data)
                 
                 let message = String(data: data, encoding: .utf8) ?? "Unknown error"
@@ -39,7 +39,7 @@ import SwiftUI
         }
     }
     
-    func identify(project: String = "all", images: [Data], organs: [String]? = nil) async throws -> PlantNetResponse {
+    func identify(project: String = "all", images: [Data], organs: [String]? = nil) async throws {
         
         var components = URLComponents(string: "\(baseURL)/identify/\(project)")!
         components.queryItems = [
@@ -75,9 +75,12 @@ import SwiftUI
         request.httpBody = body
         
         let (data, response) = try await URLSession.shared.data(for: request)
+        
+    //    print("---> response: \(String(data: data, encoding: .utf8) as AnyObject)")
+        
         try validate(response: response, data: data)
         
-        return try JSONDecoder().decode(PlantNetResponse.self, from: data)
+        self.netResponse = try JSONDecoder().decode(PlantNetResponse.self, from: data)
     }
     
     func fetchProjects() async throws -> [Project] {
@@ -132,15 +135,15 @@ import SwiftUI
         let message = String(data: data, encoding: .utf8) ?? "Unknown error"
         
         switch http.statusCode {
-        case 200..<300: return
-        case 401: throw APIError.apiError(reason: "Unauthorized")
-        case 402: throw APIError.apiError(reason: "Quota exceeded")
-        case 403: throw APIError.apiError(reason: "Resource forbidden")
-        case 404: throw APIError.apiError(reason: "Resource not found")
-        case 429: throw APIError.apiError(reason: "Requesting too quickly")
-        case 405..<500: throw APIError.apiError(reason: "Client error")
-        case 500..<600: throw APIError.apiError(reason: "Server error")
-        default: throw APIError.apiError(reason: message)
+            case 200..<300: return
+            case 401: throw APIError.apiError(reason: "Unauthorized")
+            case 402: throw APIError.apiError(reason: "Quota exceeded")
+            case 403: throw APIError.apiError(reason: "Resource forbidden")
+            case 404: throw APIError.apiError(reason: "Resource not found")
+            case 429: throw APIError.apiError(reason: "Requesting too quickly")
+            case 405..<500: throw APIError.apiError(reason: "Client error")
+            case 500..<600: throw APIError.apiError(reason: "Server error")
+            default: throw APIError.apiError(reason: message)
         }
     }
 }

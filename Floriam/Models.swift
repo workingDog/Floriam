@@ -1,5 +1,5 @@
 //
-//  Item.swift
+//  Models.swift
 //  Floriam
 //
 //  Created by Ringo Wathelet on 2026/04/11.
@@ -36,27 +36,35 @@ struct ImageItem: Identifiable, Hashable {
 
 struct PlantNetResponse: Codable {
     let query: Query
-    let predictedOrgans: [String]?
-    let bestMatch: String?
+    let predictedOrgans: [PredictedOrgan]?
+    let language, preferedReferential, bestMatch: String?
     let results: [PlantNetResult]
     let version: String?
     let remainingIdentificationRequests: Int?
 }
 
+struct PredictedOrgan: Codable {
+    let image, filename, organ: String?
+    let score: Double?
+}
+
 struct Query: Codable {
     let project: String?
-    let images: [String]?
+    let images, organs: [String]?
+    let includeRelatedImages, noReject: Bool?
 }
 
 struct PlantNetResult:  Identifiable, Codable {
     let id = UUID()
+    
     let score: Double
     let species: Species
 }
 
 struct Species: Codable {
-    let scientificNameWithoutAuthor: String
+    let scientificNameWithoutAuthor: String?
     let scientificNameAuthorship: String?
+    let scientificName: String?
     let genus: Taxonomy?
     let family: Taxonomy?
     let commonNames: [String]?
@@ -64,6 +72,8 @@ struct Species: Codable {
 
 struct Taxonomy: Codable {
     let scientificNameWithoutAuthor: String?
+    let scientificNameAuthorship: String?
+    let scientificName: String?
 }
 
 struct Project: Codable {

@@ -40,6 +40,15 @@ struct ContentView: View {
                     }
                 }
             }
+            
+            VStack {
+                if let names = netManager.netResponse?.results.first?.species.commonNames {
+                    ForEach(names, id: \.self) { name in
+                        Text(name)
+                    }
+                }
+            }
+
             Spacer()
         }
         .buttonStyle(.borderedProminent)
@@ -65,17 +74,22 @@ struct ContentView: View {
         }
         .task {
 
-//            await netManager.checkStatus()
-//            
-//            if let imgData1: Data = loadImageData(named: "image_1"),
-//               let imgData2: Data = loadImageData(named: "image_2"){
-//                do {
-//                    let response = try await netManager.identify(project: "all", images: [imgData1, imgData2], organs: ["flower", "leaf"])
-//                    print("---> response: \(response)")
-//                } catch {
-//                    print(error)
-//                }
-//            }
+    //        await netManager.checkStatus()
+            
+            if let imgData1: Data = loadImageData(named: "image_1"),
+               let imgData2: Data = loadImageData(named: "image_2"){
+                do {
+                    try await netManager.identify(project: "all", images: [imgData1, imgData2], organs: ["flower", "leaf"])
+        //            print("---> response: \(netManager.netResponse)")
+
+                    netManager.netResponse?.results.forEach { result in
+                        print("---> result: \(result)\n")
+                    }
+
+                } catch {
+                    print(error)
+                }
+            }
         }
         
     }
@@ -85,6 +99,16 @@ struct ContentView: View {
             return nil
         }
         return try? Data(contentsOf: url)
+    }
+    
+    func getCommonNames() -> [String]? {
+        
+        
+        netManager.netResponse?.results.forEach { result in
+            print("---> result: \(result)\n")
+        }
+        
+        return nil
     }
     
 }

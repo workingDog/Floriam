@@ -31,23 +31,22 @@ class ImageService {
     var modelContext: ModelContext?
     
     init() { }
-    
-    
-    func getImageData(named name: String, ext: String = "jpeg") -> Data? {
-        guard let url = Bundle.main.url(forResource: name, withExtension: ext) else {
-            return nil
-        }
-        return try? Data(contentsOf: url)
-    }
+
+//    func getImageData(from path: String) -> UIImage? {
+//        let url = URL(fileURLWithPath: path)
+//        guard let data = try? Data(contentsOf: url) else {
+//            return nil
+//        }
+//        return UIImage(data: data)
+//    }
     
     func saveImage(_ data: Data) throws -> String {
-        let filename = UUID().uuidString + ".jpg"
+        let filename = UUID().uuidString + ".jpeg"
         let url = FileManager.default
-            .urls(for: .documentDirectory, in: .userDomainMask)[0]
+            .urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
             .appendingPathComponent(filename)
 
         try data.write(to: url)
-
         return url.path
     }
     

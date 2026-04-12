@@ -28,10 +28,28 @@ import SwiftData
         self.modelContext = modelContext
         imgService.modelContext = modelContext
     }
-    
-    func saveResult() {
+
+    func saveResult(_ imgData: [Data]) {
         guard let context = modelContext else { return }
-        // use context
+        do {
+            if let netResponse {
+                var paths: [String] = []
+                try imgData.forEach { data in
+                    let path = try imgService.saveImage(data)
+                    paths.append(path)
+                    print("---> path: \(path)  data: \(data)")
+                }
+                let names = uniqueDisplayNames(top: 2)
+                // todo score
+                let record = PlantRecord(imagePaths: paths, bestNames: names, score: 0.0)
+                context.insert(record)
+                try context.save()
+                
+                try imgService.enforceLimit()
+            }
+        } catch {
+            print(error)
+        }
     }
     
     func topResults(top: Int) -> [PlantNetResult] {
@@ -248,5 +266,50 @@ enum APIError: Swift.Error, LocalizedError {
  
  
  
+ func saveImage(_ data: Data) throws -> String {
+     let filename = UUID().uuidString + ".jpg"
+     let url = FileManager.default
+         .urls(for: .documentDirectory, in: .userDomainMask)[0]
+         .appendingPathComponent(filename)
+
+     try data.write(to: url)
+
+     return url.path
+ }
  
+ 
+ 
+ 
+ func enforceLimit(context: ModelContext) throws {
+     let descriptor = FetchDescriptor<PlantIdentification>(
+         sortBy: [SortDescriptor(\.date, order: .reverse)]
+     )
+
+     let items = try context.fetch(descriptor)
+
+     if items.count > 10 {
+         let toDelete = items.suffix(from: 10)
+         for item in toDelete {
+             context.delete(item)
+
+             // also delete image file
+             try? FileManager.default.removeItem(atPath: item.imagePath)
+         }
+     }
+ }
+ 
+ let path = try saveImage(imageData)
+
+ let record = PlantIdentification(
+     imagePath: path,
+     bestName: best.species.scientificName,
+     score: best.score
+ )
+
+ context.insert(record)
+ try context.save()
+
+ try enforceLimit(context: context)
+ 
+ .urls(for: .applicationSupportDirectory, in: .userDomainMask)
  */

@@ -177,14 +177,15 @@ struct ContentView: View {
     }
     
     func identifySelectedImages() async {
+        // todo multiple images
         if let imgData1: Data = selectedImagesData.first {
 //            print("---> imgData1: \(imgData1)\n")
             do {
                 try await netManager.identify(project: "all", images: [imgData1], organs: nil)
                 // print("---> response: \(netManager.netResponse)")
-//                netManager.netResponse?.results.forEach { result in
-//                    print("---> result: \(result)\n")
-//                }
+                if netManager.netResponse?.results.isEmpty == false {
+                    netManager.saveResult(selectedImagesData)
+                }
             } catch {
                 print(error)
             }

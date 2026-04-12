@@ -71,7 +71,7 @@ struct ContentView: View {
             }
             .buttonStyle(.borderedProminent)
         }
-        .fullScreenCover(isPresented: $showCamera) {
+        .fullScreenCover(isPresented: $showCamera, onDismiss: processCamera) {
             CameraView(selectedImages: $selectedImages)
         }
         .photosPicker(isPresented: $showPhotoPicker, selection: $photoItems)
@@ -123,10 +123,30 @@ struct ContentView: View {
         }.padding(10)
     }
     
+    func processCamera() {
+        selectedImagesData.removeAll()
+        var tempArr: [UIImage] = []
+        for item in selectedImages {
+            if let data = item.uimage.jpegData(compressionQuality: 0.8) ,
+               let uiimg = UIImage(data: data) {
+                tempArr.append(uiimg)
+                selectedImagesData.append(data)
+            }
+        }
+        let smallerImg = tempArr.compactMap {
+            $0.resizeImageTo(size: CGSize(width: 333, height: 444))
+        }
+        selectedImages = smallerImg.map { ImageItem(uimage: $0) }
+        Task {
+            processing = true
+            await identifySelectedImages()
+            processing = false
+        }
+    }
+    
     func processPhotos(_ items: [PhotosPickerItem]) async {
         selectedImagesData.removeAll()
         var tempArr: [UIImage] = []
-        
         for item in items {
             if let data = try? await item.loadTransferable(type: Data.self),
                let uiimg = UIImage(data: data) {
@@ -134,13 +154,10 @@ struct ContentView: View {
                 selectedImagesData.append(data)
             }
         }
-        
         let smallerImg = tempArr.compactMap {
             $0.resizeImageTo(size: CGSize(width: 333, height: 444))
         }
-        
         selectedImages = smallerImg.map { ImageItem(uimage: $0) }
-        
         await identifySelectedImages()
     }
     

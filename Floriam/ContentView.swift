@@ -139,35 +139,3 @@ struct ContentView: View {
     }
     
 }
-
-
-
-/*
- 
- 
-//    @ViewBuilder
-//    var verticalResultsView: some View {
-//        ScrollView(.vertical) {
-//            VStack {
-//                if let best = netManager.netResponse?.bestResult,
-//                   let names = best.species.commonNames {
-//                    ForEach(names, id: \.self) { name in
-//                        Text(name)
-//                    }
-//                }
-//            }
-//            .padding(10)
-//        }
-//    }
- 
- 
- 
- when I identify the image_1.jpeg example at https://github.com/plantnet/my.plantnet, I get
- 
- "Hawaiian hibiscus
- Hibiscus
- गुड़हल", why does it include non English names?
- 
- 
- 
- */

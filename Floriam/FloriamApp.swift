@@ -8,6 +8,11 @@
 import SwiftUI
 import SwiftData
 
+
+//  see https://github.com/plantnet/status
+//      https://my.plantnet.org/doc/api/openapi
+
+
 @main
 struct FloriamApp: App {
     

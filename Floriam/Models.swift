@@ -74,6 +74,12 @@ struct Species: Codable {
     let genus: Taxonomy?
     let family: Taxonomy?
     let commonNames: [String]?
+    
+    var englishNames: [String]? {
+        guard let commonNames else { return nil }
+        return commonNames.filter { $0.canBeConverted(to: .ascii) }
+    }
+ 
 }
 
 struct Taxonomy: Codable {

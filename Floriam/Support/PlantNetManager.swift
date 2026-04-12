@@ -6,11 +6,13 @@
 //
 import Foundation
 import SwiftUI
-
+import SwiftData
 
 
 @Observable class PlantNetManager {
     
+    @ObservationIgnored var modelContext: ModelContext?
+    @ObservationIgnored let imgService = ImageService()
     @ObservationIgnored let apiKey: String
     
     let baseURL = "https://my-api.plantnet.org/v2"
@@ -20,6 +22,16 @@ import SwiftUI
     init() {
         self.apiKey = StoreService.getKey() ?? ""
       //  print("---> apiKey: \(apiKey)")
+    }
+    
+    func setContext(_ modelContext: ModelContext) {
+        self.modelContext = modelContext
+        imgService.modelContext = modelContext
+    }
+    
+    func saveResult() {
+        guard let context = modelContext else { return }
+        // use context
     }
     
     func topResults(top: Int) -> [PlantNetResult] {
@@ -34,7 +46,7 @@ import SwiftUI
         if let url = URL(string: "\(baseURL)/_status") {
             do {
                 let (data, response) = try await URLSession.shared.data(from: url)
-       //         try validate(response: response, data: data)
+                try validate(response: response, data: data)
                 //     return try JSONDecoder().decode([xxx].self, from: data)
                 
                 let message = String(data: data, encoding: .utf8) ?? "Unknown error"
@@ -170,3 +182,44 @@ enum APIError: Swift.Error, LocalizedError {
 }
 
 
+
+
+/*
+ 
+ 
+ 
+ import NaturalLanguage
+
+ func detectLanguage(for text: String) -> NLLanguage? {
+     let recognizer = NLLanguageRecognizer()
+     recognizer.processString(text)
+     return recognizer.dominantLanguage
+ }
+ 
+ func englishNames(from names: [String]) -> [String] {
+     names.filter { name in
+         detectLanguage(for: name) == .english
+     }
+ }
+ 
+ if let names = best.species.commonNames {
+     let english = englishNames(from: names)
+
+     ForEach(english, id: \.self) { name in
+         Text(name)
+     }
+ }
+ 
+ func preferredNames(from names: [String]) -> [String] {
+     names.filter { name in
+         if let lang = detectLanguage(for: name) {
+             return lang == .japanese || lang == .english
+         }
+         return false
+     }
+ }
+ 
+ 
+ 
+ 
+ */

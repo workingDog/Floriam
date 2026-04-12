@@ -1,0 +1,78 @@
+//
+//  ImageService.swift
+//  Floriam
+//
+//  Created by Ringo Wathelet on 2026/04/12.
+//
+import Foundation
+import SwiftUI
+import SwiftData
+
+
+/*
+ let path = try saveImage(imageData)
+
+ let record = PlantRecord(
+     imagePath: path,
+     bestName: best.species.scientificName,
+     score: best.score
+ )
+
+ context.insert(record)
+ try context.save()
+
+ try enforceLimit(context: context)
+ */
+
+
+
+class ImageService {
+ 
+    var modelContext: ModelContext?
+    
+    init() { }
+    
+    
+    func getImageData(named name: String, ext: String = "jpeg") -> Data? {
+        guard let url = Bundle.main.url(forResource: name, withExtension: ext) else {
+            return nil
+        }
+        return try? Data(contentsOf: url)
+    }
+    
+    func saveImage(_ data: Data) throws -> String {
+        let filename = UUID().uuidString + ".jpg"
+        let url = FileManager.default
+            .urls(for: .documentDirectory, in: .userDomainMask)[0]
+            .appendingPathComponent(filename)
+
+        try data.write(to: url)
+
+        return url.path
+    }
+    
+    func getImage(from path: String) -> UIImage? {
+        UIImage(contentsOfFile: path)
+    }
+    
+    func enforceLimit() throws {
+        let descriptor = FetchDescriptor<PlantRecord>(
+            sortBy: [SortDescriptor(\.date, order: .reverse)]
+        )
+
+        if let modelContext {
+            let items = try modelContext.fetch(descriptor)
+            if items.count > 10 {
+                let toDelete = items.suffix(from: 10)
+                for item in toDelete {
+                    modelContext.delete(item)
+                    // also delete image files
+                    item.imagePaths.forEach { path in
+                        try? FileManager.default.removeItem(atPath: path)
+                    }
+                }
+            }
+        }
+    }
+
+}

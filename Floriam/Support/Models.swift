@@ -10,23 +10,33 @@ import SwiftData
 import UIKit
 
 
+@Model
+final class PlantRecord {
+    @Attribute(.unique) var plantId: UUID
+    var date: Date
+    var imagePaths: [String]
+    var bestNames: [String]
+    var score: Double
+
+    init(imagePaths: [String], bestNames: [String], score: Double) {
+        self.plantId = UUID()
+        self.date = Date()
+        self.imagePaths = imagePaths
+        self.bestNames = bestNames
+        self.score = score
+    }
+}
+
 
 extension UIImage {
+    
     func resizeImageTo(size: CGSize) -> UIImage {
         let renderer = UIGraphicsImageRenderer(size: size)
         return renderer.image { _ in
             self.draw(in: CGRect(origin: .zero, size: size))
         }
     }
-}
-
-@Model
-final class Item {
-    var timestamp: Date
     
-    init(timestamp: Date) {
-        self.timestamp = timestamp
-    }
 }
 
 struct ImageItem: Identifiable, Hashable {

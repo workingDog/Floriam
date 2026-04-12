@@ -12,7 +12,7 @@ import PhotosUI
 
 struct ContentView: View {
     @Environment(PlantNetManager.self) private var netManager
-    //   @Environment(\.modelContext) private var modelContext
+    @Environment(\.modelContext) private var modelContext
 
     @State private var showPhotoPicker = false
     @State private var showCamera = false
@@ -33,7 +33,6 @@ struct ContentView: View {
                 }
             }.padding(10)
             Divider()
-            
             GeometryReader { geo in
                 VStack(alignment: .leading, spacing: 0) {
                     horizontalImagesView
@@ -58,6 +57,9 @@ struct ContentView: View {
             processingTask = Task {
                 await processPhotos(items)
             }
+        }
+        .onAppear {
+            netManager.setContext(modelContext)
         }
     }
 
@@ -130,12 +132,5 @@ struct ContentView: View {
         }
         
     }
-    
-    func loadImageData(named name: String, ext: String = "jpeg") -> Data? {
-        guard let url = Bundle.main.url(forResource: name, withExtension: ext) else {
-            return nil
-        }
-        return try? Data(contentsOf: url)
-    }
-    
+
 }

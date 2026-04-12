@@ -13,10 +13,11 @@ import PhotosUI
 struct ContentView: View {
     @Environment(PlantNetManager.self) private var netManager
     @Environment(\.modelContext) private var modelContext
-
+    
     @State private var showPhotoPicker = false
     @State private var showCamera = false
     @State private var processing = false
+    
     @State private var selectedImages: [ImageItem] = []
     @State private var selectedImagesData: [Data] = []
     @State private var photoItems: [PhotosPickerItem] = []
@@ -24,28 +25,52 @@ struct ContentView: View {
     @State private var processingTask: Task<Void, Never>?
     
     var body: some View {
-        VStack {
-            HStack {
-                Button("Camera") {
-                    showCamera = true
+        ZStack {
+            LinearGradient(
+                colors: [Color.green.opacity(0.3),Color.blue.opacity(0.2),Color(.systemBackground)],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+            .ignoresSafeArea()
+            
+            VStack {
+                HStack {
+                    Button {
+                        showCamera = true
+                    } label: {
+                        VStack {
+                            Image(systemName: "camera").font(.title2)
+                            Text("Camera").font(.caption)
+                        }
+                    }
+                    Spacer()
+                    Text("Plants").font(.headline)
+                    Spacer()
+                    Button {
+                        showPhotoPicker = true
+                    } label: {
+                        VStack {
+                            Image(systemName: "photo.on.rectangle").font(.title2)
+                            Text("Photos").font(.caption)
+                        }
+                    }
                 }
-                Button("Photos") {
-                    showPhotoPicker = true
+                .padding(.horizontal)
+                .padding(.top, 10)
+                .padding(.bottom, 10)
+                .background(.ultraThinMaterial)
+                Divider()
+                GeometryReader { geo in
+                    VStack(alignment: .leading, spacing: 0) {
+                        horizontalImagesView.frame(height: geo.size.height * 2.0 / 3.0)
+                        Divider()
+                        verticalResultsView.frame(height: geo.size.height / 3)
+                    }
                 }
-            }.padding(10)
-            Divider()
-            GeometryReader { geo in
-                VStack(alignment: .leading, spacing: 0) {
-                    horizontalImagesView
-                        .frame(height: geo.size.height * 2.0 / 3.0)
-                    Divider()
-                    verticalResultsView
-                        .frame(height: geo.size.height / 3)
-                }
+                Spacer()
             }
-            Spacer()
+            .buttonStyle(.borderedProminent)
         }
-        .buttonStyle(.borderedProminent)
         .fullScreenCover(isPresented: $showCamera) {
             CameraView(selectedImages: $selectedImages)
         }
@@ -61,7 +86,7 @@ struct ContentView: View {
                 processing = false
             }
         }
-        .onAppear {
+        .task(id: modelContext) {
             netManager.setContext(modelContext)
         }
     }
@@ -75,17 +100,10 @@ struct ContentView: View {
         } else {
             ScrollView(.vertical) {
                 VStack {
-                    ForEach(netManager.topResults(top: 2)) { result in
-                        Text(result.species.scientificName ?? "")
-                        if let names = result.species.englishNames {
-                            ForEach(names, id: \.self) { name in
-                                Text(name)
-                            }
-                        }
-                        Divider()
+                    ForEach(netManager.uniqueDisplayNames(top: 2), id: \.self) { name in
+                        Text(name)
                     }
-                }
-                .padding(10)
+                }.padding(10)
             }
         }
     }

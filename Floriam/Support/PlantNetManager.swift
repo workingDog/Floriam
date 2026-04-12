@@ -42,6 +42,33 @@ import SwiftData
             .map { $0 }
     }
     
+    func uniqueDisplayNames(top: Int) -> [String] {
+        let results = topResults(top: top)
+        
+        var seen = Set<String>()
+        var output: [String] = []
+
+        for result in results {
+            // 1. scientific name first (priority)
+            if let sci = result.species.scientificName, !sci.isEmpty {
+                if !seen.contains(sci) {
+                    seen.insert(sci)
+                    output.append(sci)
+                }
+            }
+
+            // 2. then common names
+            for name in result.species.englishNames ?? [] {
+                if !seen.contains(name) {
+                    seen.insert(name)
+                    output.append(name)
+                }
+            }
+        }
+
+        return output
+    }
+    
     func checkStatus() async {
         if let url = URL(string: "\(baseURL)/_status") {
             do {

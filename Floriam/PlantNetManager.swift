@@ -154,9 +154,9 @@ enum APIError: Swift.Error, LocalizedError {
     
     var errorDescription: String? {
         switch self {
-        case .unknown: return "Unknown error"
-        case .apiError(let reason), .parserError(let reason): return reason
-        case .networkError(let from): return from.localizedDescription
+            case .unknown: return "Unknown error"
+            case .apiError(let reason), .parserError(let reason): return reason
+            case .networkError(let from): return from.localizedDescription
         }
     }
 }

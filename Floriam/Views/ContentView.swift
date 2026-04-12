@@ -16,6 +16,7 @@ struct ContentView: View {
     
     @State private var showPhotoPicker = false
     @State private var showCamera = false
+    @State private var showPrevious = false
     @State private var processing = false
     
     @State private var selectedImages: [ImageItem] = []
@@ -44,7 +45,14 @@ struct ContentView: View {
                         }
                     }
                     Spacer()
-                    Text("Plants").font(.headline)
+                    Button {
+                        showPrevious = true
+                    } label: {
+                        VStack {
+                            Image(systemName: "list.clipboard").font(.title2)
+                            Text("List").font(.caption)
+                        }
+                    }
                     Spacer()
                     Button {
                         showPhotoPicker = true
@@ -74,6 +82,9 @@ struct ContentView: View {
         .fullScreenCover(isPresented: $showCamera, onDismiss: processCamera) {
             CameraView(selectedImages: $selectedImages)
         }
+        .fullScreenCover(isPresented: $showPrevious) {
+            PrevListView()
+        }
         .photosPicker(isPresented: $showPhotoPicker, selection: $photoItems)
         .task(id: photoItems) {
             guard !photoItems.isEmpty else { return }
@@ -100,8 +111,12 @@ struct ContentView: View {
         } else {
             ScrollView(.vertical) {
                 VStack {
-                    ForEach(netManager.uniqueDisplayNames(top: 2), id: \.self) { name in
-                        Text(name)
+                    if netManager.uniqueDisplayNames(top: 2).isEmpty {
+                        Text("No results")
+                    } else {
+                        ForEach(netManager.uniqueDisplayNames(top: 2), id: \.self) { name in
+                            Text(name)
+                        }
                     }
                 }.padding(10)
             }

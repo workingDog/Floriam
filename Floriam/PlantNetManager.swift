@@ -21,7 +21,15 @@ import SwiftUI
         self.apiKey = StoreService.getKey() ?? ""
       //  print("---> apiKey: \(apiKey)")
     }
-
+    
+    func topResults(top: Int) -> [PlantNetResult] {
+        guard let netResponse else { return [] }
+        return netResponse.results
+            .sorted(by: { $0.score > $1.score }) // highest first
+            .prefix(top)
+            .map { $0 }
+    }
+    
     func checkStatus() async {
         if let url = URL(string: "\(baseURL)/_status") {
             do {

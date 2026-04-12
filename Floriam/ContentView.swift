@@ -13,9 +13,7 @@ import PhotosUI
 struct ContentView: View {
     @Environment(PlantNetManager.self) private var netManager
     //   @Environment(\.modelContext) private var modelContext
-    
-    @State private var response: PlantNetResponse?
-    
+
     @State private var showPhotoPicker = false
     @State private var showCamera = false
     @State private var selectedImages: [ImageItem] = []
@@ -33,20 +31,16 @@ struct ContentView: View {
                 Button("Photos") {
                     showPhotoPicker = true
                 }
-            }
+            }.padding(10)
             Divider()
-            ScrollView(.horizontal) {
-                HStack {
-                    ForEach(selectedImages) { imgItem in
-                        Image(uiImage: imgItem.uimage)
-                    }
-                }
-            }
-            VStack {
-                if let names = netManager.netResponse?.results.first?.species.commonNames {
-                    ForEach(names, id: \.self) { name in
-                        Text(name)
-                    }
+            
+            GeometryReader { geo in
+                VStack(alignment: .leading, spacing: 0) {
+                    horizontalImagesView
+                        .frame(height: geo.size.height * 2.0 / 3.0)
+                    Divider()
+                    verticalResultsView
+                        .frame(height: geo.size.height / 3)
                 }
             }
             Spacer()
@@ -65,6 +59,36 @@ struct ContentView: View {
                 await processPhotos(items)
             }
         }
+    }
+    
+    @ViewBuilder
+    var verticalResultsView: some View {
+        ScrollView(.vertical) {
+            VStack {
+                if let best = netManager.netResponse?.bestResult,
+                   let names = best.species.commonNames {
+                    ForEach(names, id: \.self) { name in
+                        Text(name)
+                    }
+                }
+            }
+            .padding(10)
+        }
+    }
+    
+    @ViewBuilder
+    var horizontalImagesView: some View {
+        ScrollView(.horizontal) {
+            HStack {
+                ForEach(selectedImages) { imgItem in
+                    Image(uiImage: imgItem.uimage)
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(maxHeight: .infinity)
+                }
+            }
+            .padding(.horizontal)
+        }.padding(10)
     }
     
     func processPhotos(_ items: [PhotosPickerItem]) async {
@@ -90,13 +114,13 @@ struct ContentView: View {
     
     func identifySelectedImages() async {
         if let imgData1: Data = selectedImagesData.first {
-            print("---> imgData1: \(imgData1)\n")
+//            print("---> imgData1: \(imgData1)\n")
             do {
-                try await netManager.identify(project: "all", images: [imgData1], organs: ["flower"])
+                try await netManager.identify(project: "all", images: [imgData1], organs: nil)
                 // print("---> response: \(netManager.netResponse)")
-                netManager.netResponse?.results.forEach { result in
-                    print("---> result: \(result)\n")
-                }
+//                netManager.netResponse?.results.forEach { result in
+//                    print("---> result: \(result)\n")
+//                }
             } catch {
                 print(error)
             }
@@ -112,60 +136,3 @@ struct ContentView: View {
     }
     
 }
-
-/*
- 
- //        let imgData1: [Data] = selectedImages.compactMap {
- //            $0.uimage.jpegData(compressionQuality: 0.8)
- //        }
-         
- //        let imgData: [Data] = selectedImages.compactMap { $0.uimage.pngData() }
-         
-         print("---> selectedImagesData.first: \(selectedImagesData.first)\n")
-
- 
- .task(id: photoItems) {
-     if !photoItems.isEmpty {
-         selectedImagesData.removeAll()
-         var tempArr: [UIImage] = []
-         for item in photoItems {
-             if let data = try? await item.loadTransferable(type: Data.self),
-                let uiimg = UIImage(data: data) {
-                 tempArr.append(uiimg)
-                 selectedImagesData.append(data)
-             }
-         }
-         // reduce the size of the images
-         let smallerImg = tempArr.compactMap{$0.resizeImageTo(size: CGSize(width: 333, height: 444))}
-         // update/onChange selectedImages only once
-         selectedImages = smallerImg.map{ImageItem(uimage: $0)}
-         photoItems.removeAll()
-         
-         await identifySelectedImages()
-     }
- }
- 
- 
-//        .task {
-//
-//    //        await netManager.checkStatus()
-//
-//            if let imgData1: Data = loadImageData(named: "image_1"),
-//               let imgData2: Data = loadImageData(named: "image_2"){
-//                do {
-//                    try await netManager.identify(project: "all", images: [imgData1, imgData2], organs: ["flower", "leaf"])
-//        //            print("---> response: \(netManager.netResponse)")
-//
-//                    netManager.netResponse?.results.forEach { result in
-//                        print("---> result: \(result)\n")
-//                    }
-//
-//                } catch {
-//                    print(error)
-//                }
-//            }
-//        }
- 
- 
- */
-

@@ -43,6 +43,12 @@ struct PlantNetResponse: Codable {
     let remainingIdentificationRequests: Int?
 }
 
+extension PlantNetResponse {
+    var bestResult: PlantNetResult? {
+        results.max(by: { $0.score < $1.score })
+    }
+}
+
 struct PredictedOrgan: Codable {
     let image, filename, organ: String?
     let score: Double?

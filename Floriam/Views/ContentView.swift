@@ -16,6 +16,7 @@ struct ContentView: View {
 
     @State private var showPhotoPicker = false
     @State private var showCamera = false
+    @State private var processing = false
     @State private var selectedImages: [ImageItem] = []
     @State private var selectedImagesData: [Data] = []
     @State private var photoItems: [PhotosPickerItem] = []
@@ -55,29 +56,37 @@ struct ContentView: View {
             photoItems = []
             processingTask?.cancel()
             processingTask = Task {
+                processing = true
                 await processPhotos(items)
+                processing = false
             }
         }
         .onAppear {
             netManager.setContext(modelContext)
         }
     }
-
+    
     @ViewBuilder
     var verticalResultsView: some View {
-        ScrollView(.vertical) {
-            VStack {
-                ForEach(netManager.topResults(top: 2)) { result in
-                    Text(result.species.scientificName ?? "")
-                    if let names = result.species.englishNames {
-                        ForEach(names, id: \.self) { name in
-                            Text(name)
+        if processing {
+            ProgressView()
+                .progressViewStyle(.circular)
+                .frame(maxWidth: .infinity, alignment: .center)
+        } else {
+            ScrollView(.vertical) {
+                VStack {
+                    ForEach(netManager.topResults(top: 2)) { result in
+                        Text(result.species.scientificName ?? "")
+                        if let names = result.species.englishNames {
+                            ForEach(names, id: \.self) { name in
+                                Text(name)
+                            }
                         }
+                        Divider()
                     }
-                    Divider()
                 }
+                .padding(10)
             }
-            .padding(10)
         }
     }
     

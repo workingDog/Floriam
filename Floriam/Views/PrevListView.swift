@@ -63,7 +63,7 @@ struct ListRowView: View {
     let plantRecord: PlantRecord
     
     var body: some View {
-        HStack {
+        VStack {
             ForEach(plantRecord.imagePaths, id: \.self) { path in
                 if let uiImage = netManager.imgService.getImage(from: path) {
                     Image(uiImage: uiImage)
@@ -74,10 +74,12 @@ struct ListRowView: View {
                         .clipped()
                 }
             }
-            VStack(alignment: .leading) {
-                ForEach(plantRecord.bestNames, id: \.self) { name in
-                    Text(name)
-                        .frame(maxWidth: .infinity, alignment: .leading)
+            ScrollView {
+                VStack(alignment: .leading) {
+                    ForEach(plantRecord.bestNames, id: \.self) { name in
+                        Text(name)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                    }
                 }
             }.padding(10)
         }

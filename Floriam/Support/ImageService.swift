@@ -16,19 +16,27 @@ class ImageService {
     init() { }
 
     func saveImage(_ data: Data) throws -> String {
-        let filename = UUID().uuidString + ".jpeg"
-        let url = FileManager.default
-            .urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
-            .appendingPathComponent(filename)
+        let fm = FileManager.default
+        let baseURL = fm.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
 
-        try data.write(to: url)
-        return url.path
+        // Ensure directory exists
+        try fm.createDirectory(at: baseURL, withIntermediateDirectories: true)
+
+        let filename = UUID().uuidString + ".jpg"
+        let fileURL = baseURL.appendingPathComponent(filename)
+
+        try data.write(to: fileURL, options: .atomic)
+        return fileURL.path
     }
-    
+
     func getImage(from path: String) -> UIImage? {
-        UIImage(contentsOfFile: path)
+        guard FileManager.default.fileExists(atPath: path) else {
+            print("---> file not found at path:", path)
+            return nil
+        }
+        return UIImage(contentsOfFile: path)
     }
-    
+ 
     // only keep the last 10 PlantRecords
     func enforceLimit() throws {
         let descriptor = FetchDescriptor<PlantRecord>(

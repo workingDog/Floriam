@@ -36,6 +36,7 @@ import SwiftData
                 try imgData.forEach { data in
                     let path = try imgService.saveImage(data)
                     paths.append(path)
+                  //  print("---> save at path:", path)
                 }
                 let bestNames = uniqueDisplayNames(top: 2)
                 let bestScore = netResponse.bestResult?.score ?? 0.0

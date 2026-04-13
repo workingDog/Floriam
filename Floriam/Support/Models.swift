@@ -51,12 +51,6 @@ struct PlantNetResponse: Codable {
     let results: [PlantNetResult]
     let version: String?
     let remainingIdentificationRequests: Int?
-    
-    func getTopScore() -> Double {
-     
-        
-        return 1.0
-    }
 }
 
 extension PlantNetResponse {
@@ -91,6 +85,7 @@ struct Species: Codable {
     let family: Taxonomy?
     let commonNames: [String]?
     
+    // todo
     var englishNames: [String]? {
         guard let commonNames else { return nil }
         return commonNames.filter { $0.canBeConverted(to: .ascii) }

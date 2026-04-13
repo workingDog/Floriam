@@ -19,7 +19,7 @@ import SwiftData
     var netResponse: PlantNetResponse?
     
     init() {
-        self.apiKey = StoreService.getKey() ?? ""
+        self.apiKey = KeychainInterface.getKey() ?? ""
     }
     
     func setContext(_ modelContext: ModelContext) {

@@ -53,16 +53,16 @@ struct KeyView: View {
                 Spacer()
             }
             .onAppear {
-                theKey = StoreService.getKey() ?? ""
+                theKey = KeychainInterface.getKey() ?? ""
             }
         }
     }
     
     func doSaveKey() {
-        if StoreService.getKey() == nil {
-            StoreService.setKey(key: theKey)
+        if KeychainInterface.getKey() == nil {
+            KeychainInterface.setKey(key: theKey)
         } else {
-            StoreService.updateKey(key: theKey)
+            KeychainInterface.updateKey(key: theKey)
         }
         dismiss()
     }

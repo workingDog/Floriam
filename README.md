@@ -6,6 +6,14 @@ A basic app to identify a plant from a picture taken with the camera or from the
   <img src="picture2.png" width="333"  height="444" />
 </p>
 
+
+## Usage
+
+First select the **gear icon** and add your **api-key** and save.
+
+The **List** keeps only the last 10 pictures.
+
+
 ### References
 
 -   [Pl@ntNet](https://my.plantnet.org/)

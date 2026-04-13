@@ -11,12 +11,13 @@ import SwiftData
 struct PrevListView: View {
     @Environment(PlantNetManager.self) private var netManager
     @Environment(\.modelContext) private var modelContext
+    @Environment(\.dismiss) var dismiss
     
     @Query(sort: \PlantRecord.date) var plantlist: [PlantRecord]
     
     
     var body: some View {
-        ZStack {
+        ZStack(alignment: .topLeading) {
             LinearGradient(
                 colors: [Color.green.opacity(0.3),Color.blue.opacity(0.2),Color(.systemBackground)],
                 startPoint: .topLeading,
@@ -24,15 +25,23 @@ struct PrevListView: View {
             )
             .ignoresSafeArea()
             
-            List {
-                ForEach(plantlist) { plant in
-                    ListRowView(plantRecord: plant)
-                        .listRowBackground(Color.clear)
+            VStack(alignment: .leading) {
+                Button("Done") {
+                    dismiss()
                 }
-                .onDelete(perform: deleteItems)
+                .buttonStyle(.borderedProminent)
+                .padding(10)
+                
+                List {
+                    ForEach(plantlist) { plant in
+                        ListRowView(plantRecord: plant)
+                            .listRowBackground(Color.clear)
+                    }
+                    .onDelete(perform: deleteItems)
+                }
+                .scrollContentBackground(.hidden)
+                .background(Color.clear)
             }
-            .scrollContentBackground(.hidden)
-            .background(Color.clear)
         }
     }
     
@@ -48,10 +57,14 @@ struct PrevListView: View {
 
 struct ListRowView: View {
     @Environment(PlantNetManager.self) private var netManager
+    @Environment(\.dismiss) var dismiss
     
     let plantRecord: PlantRecord
     
     var body: some View {
+        
+        
+        
         HStack {
             ForEach(plantRecord.imagePaths, id: \.self) { path in
                 if let uiImage = netManager.imgService.getImage(from: path) {

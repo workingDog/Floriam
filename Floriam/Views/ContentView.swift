@@ -21,7 +21,6 @@ struct ContentView: View {
     @State private var processing = false
     
     @State private var selectedImages: [ImageItem] = []
-    @State private var selectedImagesData: [Data] = []
     @State private var photoItems: [PhotosPickerItem] = []
     
     @State private var processingTask: Task<Void, Never>?
@@ -65,6 +64,7 @@ struct ContentView: View {
                         Image(systemName: "gear").font(.title2)
                     }.tint(.gray)
                 }
+                .disabled(processing)
                 .padding(.horizontal)
                 .padding(.top, 10)
                 .padding(.bottom, 10)
@@ -98,9 +98,7 @@ struct ContentView: View {
             photoItems = []
             processingTask?.cancel()
             processingTask = Task {
-                processing = true
                 await processPhotos(items)
-                processing = false
             }
         }
         .task(id: modelContext) {
@@ -148,18 +146,6 @@ struct ContentView: View {
     }
     
     func processCamera() {
-        selectedImagesData.removeAll()
-        var processedImages: [UIImage] = []
-
-        for item in selectedImages {
-            let original = item.uimage
-            let resized = original.resizeImageTo(size: CGSize(width: 333, height: 444))
-            if let compressedData = resized.jpegData(compressionQuality: 0.7) {
-                processedImages.append(resized)
-                selectedImagesData.append(compressedData)
-            }
-        }
-        selectedImages = processedImages.map { ImageItem(uimage: $0) }
         Task {
             processing = true
             await identifySelectedImages()
@@ -168,30 +154,26 @@ struct ContentView: View {
     }
     
     func processPhotos(_ items: [PhotosPickerItem]) async {
-        selectedImagesData.removeAll()
-        var tempArr: [UIImage] = []
-
+        selectedImages.removeAll()
         for item in items {
             if let data = try? await item.loadTransferable(type: Data.self),
-               let original = UIImage(data: data) {
-                let resized = original.resizeImageTo(size: CGSize(width: 333, height: 444))
-                if let compressedData = resized.jpegData(compressionQuality: 0.7) {
-                    tempArr.append(resized)
-                    selectedImagesData.append(compressedData)
-                }
+               let img = UIImage(data: data) {
+                selectedImages.append(ImageItem(uimage: img))
             }
         }
-        selectedImages = tempArr.map { ImageItem(uimage: $0) }
+        processing = true
         await identifySelectedImages()
+        processing = false
     }
     
     func identifySelectedImages() async {
         // todo multiple images
-        if let imgData1: Data = selectedImagesData.first {
+        if let imgData1: Data = selectedImages.first?.imgData {
             do {
                 try await netManager.identify(project: "all", images: [imgData1], organs: nil)
                 if netManager.netResponse?.results.isEmpty == false {
-                    netManager.saveResult(selectedImagesData)
+                    let dataArr = selectedImages.compactMap { $0.imgData }
+                    netManager.saveResult(dataArr)
                 }
             } catch {
                 print(error)

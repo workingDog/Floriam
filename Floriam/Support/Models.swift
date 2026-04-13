@@ -42,6 +42,12 @@ extension UIImage {
 struct ImageItem: Identifiable, Hashable {
     let id = UUID()
     var uimage: UIImage
+    
+    // for storage
+    var imgData: Data? {
+        let resized = uimage.resizeImageTo(size: CGSize(width: 333, height: 444))
+        return resized.jpegData(compressionQuality: 0.7)
+    }
 }
 
 struct PlantNetResponse: Codable {

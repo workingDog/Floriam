@@ -24,13 +24,25 @@ struct PrevListView: View {
             )
             .ignoresSafeArea()
             
-            List(plantlist) { plant in
-                ListRowView(plantRecord: plant)
-                    .listRowBackground(Color.clear)
+            List {
+                ForEach(plantlist) { plant in
+                    ListRowView(plantRecord: plant)
+                        .listRowBackground(Color.clear)
+                }
+                .onDelete(perform: deleteItems)
             }
             .scrollContentBackground(.hidden)
             .background(Color.clear)
         }
+    }
+    
+    private func deleteItems(at offsets: IndexSet) {
+        for index in offsets {
+            let plant = plantlist[index]
+            modelContext.delete(plant)
+        }
+        
+        try? modelContext.save()
     }
 }
 

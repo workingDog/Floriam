@@ -85,38 +85,3 @@ struct ListRowView: View {
         }
     }
 }
-
-
-/*
-struct ListRowView: View {
-    @Environment(PlantNetManager.self) private var netManager
-    
-    let plantRecord: PlantRecord
-    
-    var body: some View {
-        VStack(alignment: .leading) {
-            ScrollView(.horizontal) {
-                HStack {
-                    ForEach(plantRecord.imagePaths, id: \.self) { path in
-                        if let uiImage = netManager.imgService.getImage(from: path) {
-                            Image(uiImage: uiImage)
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 200, height: 200)
-                        }
-                    }
-                }
-            }
-            
-            ScrollView(.vertical) {
-                VStack(alignment: .leading) {
-                    ForEach(plantRecord.bestNames, id: \.self) { name in
-                        Text(name)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                    }
-                }
-            }
-        }
-    }
-}
-*/

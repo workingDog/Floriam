@@ -9,37 +9,12 @@ import SwiftUI
 import SwiftData
 
 
-/*
- let path = try saveImage(imageData)
-
- let record = PlantRecord(
-     imagePath: path,
-     bestName: best.species.scientificName,
-     score: best.score
- )
-
- context.insert(record)
- try context.save()
-
- try enforceLimit(context: context)
- */
-
-
-
 class ImageService {
  
     var modelContext: ModelContext?
     
     init() { }
 
-//    func getImageData(from path: String) -> UIImage? {
-//        let url = URL(fileURLWithPath: path)
-//        guard let data = try? Data(contentsOf: url) else {
-//            return nil
-//        }
-//        return UIImage(data: data)
-//    }
-    
     func saveImage(_ data: Data) throws -> String {
         let filename = UUID().uuidString + ".jpeg"
         let url = FileManager.default
@@ -54,6 +29,7 @@ class ImageService {
         UIImage(contentsOfFile: path)
     }
     
+    // only keep the last 10 PlantRecords
     func enforceLimit() throws {
         let descriptor = FetchDescriptor<PlantRecord>(
             sortBy: [SortDescriptor(\.date, order: .reverse)]

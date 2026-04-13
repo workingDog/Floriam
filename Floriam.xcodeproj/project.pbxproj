@@ -6,7 +6,12 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		C737C70F2F8C98FC00769F44 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = C737C70E2F8C98FC00769F44 /* README.md */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
+		C737C70E2F8C98FC00769F44 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		C7A02C942F8A4070009DF9C0 /* Floriam.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Floriam.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -32,6 +37,7 @@
 		C7A02C8B2F8A4070009DF9C0 = {
 			isa = PBXGroup;
 			children = (
+				C737C70E2F8C98FC00769F44 /* README.md */,
 				C7A02C962F8A4070009DF9C0 /* Floriam */,
 				C7A02C952F8A4070009DF9C0 /* Products */,
 			);
@@ -109,6 +115,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C737C70F2F8C98FC00769F44 /* README.md in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

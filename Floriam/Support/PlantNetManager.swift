@@ -20,8 +20,8 @@ import SwiftData
     var netResponse: PlantNetResponse?
     
     init() {
+        // StoreService.setKey(key: "YOUR-APIKEY") // <-- do this once, and restart
         self.apiKey = StoreService.getKey() ?? ""
-      //  print("---> apiKey: \(apiKey)")
     }
     
     func setContext(_ modelContext: ModelContext) {
@@ -37,7 +37,7 @@ import SwiftData
                 try imgData.forEach { data in
                     let path = try imgService.saveImage(data)
                     paths.append(path)
-                    print("---> path: \(path)  data: \(data)")
+                   // print("---> path: \(path)  data: \(data)")
                 }
                 let names = uniqueDisplayNames(top: 2)
                 // todo score
@@ -67,7 +67,7 @@ import SwiftData
         var output: [String] = []
 
         for result in results {
-            // 1. scientific name first (priority)
+            // scientific name first
             if let sci = result.species.scientificName, !sci.isEmpty {
                 if !seen.contains(sci) {
                     seen.insert(sci)
@@ -75,7 +75,7 @@ import SwiftData
                 }
             }
 
-            // 2. then common names
+            // common names
             for name in result.species.englishNames ?? [] {
                 if !seen.contains(name) {
                     seen.insert(name)
@@ -92,8 +92,6 @@ import SwiftData
             do {
                 let (data, response) = try await URLSession.shared.data(from: url)
                 try validate(response: response, data: data)
-                //     return try JSONDecoder().decode([xxx].self, from: data)
-                
                 let message = String(data: data, encoding: .utf8) ?? "Unknown error"
                 print("---> checkStatus message: \(message)")
             } catch {
@@ -231,7 +229,7 @@ enum APIError: Swift.Error, LocalizedError {
 
 /*
  
- 
+ // todo
  
  import NaturalLanguage
 
@@ -263,53 +261,5 @@ enum APIError: Swift.Error, LocalizedError {
          return false
      }
  }
- 
- 
- 
- func saveImage(_ data: Data) throws -> String {
-     let filename = UUID().uuidString + ".jpg"
-     let url = FileManager.default
-         .urls(for: .documentDirectory, in: .userDomainMask)[0]
-         .appendingPathComponent(filename)
 
-     try data.write(to: url)
-
-     return url.path
- }
- 
- 
- 
- 
- func enforceLimit(context: ModelContext) throws {
-     let descriptor = FetchDescriptor<PlantIdentification>(
-         sortBy: [SortDescriptor(\.date, order: .reverse)]
-     )
-
-     let items = try context.fetch(descriptor)
-
-     if items.count > 10 {
-         let toDelete = items.suffix(from: 10)
-         for item in toDelete {
-             context.delete(item)
-
-             // also delete image file
-             try? FileManager.default.removeItem(atPath: item.imagePath)
-         }
-     }
- }
- 
- let path = try saveImage(imageData)
-
- let record = PlantIdentification(
-     imagePath: path,
-     bestName: best.species.scientificName,
-     score: best.score
- )
-
- context.insert(record)
- try context.save()
-
- try enforceLimit(context: context)
- 
- .urls(for: .applicationSupportDirectory, in: .userDomainMask)
  */

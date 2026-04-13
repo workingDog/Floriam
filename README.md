@@ -11,7 +11,7 @@ A basic app to identify a plant from a picture taken with the camera or from the
 
 First select the **gear icon** and add your **api-key** and save.
 
-The **List** keeps only the last 10 pictures.
+The **List** keeps only the last 10 identified pictures.
 
 
 ### References

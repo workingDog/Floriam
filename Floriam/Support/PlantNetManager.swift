@@ -12,9 +12,8 @@ import SwiftData
 @Observable class PlantNetManager {
     
     @ObservationIgnored var modelContext: ModelContext?
-    @ObservationIgnored let imgService = ImageService()
-    @ObservationIgnored let apiKey: String
     
+    let apiKey: String
     let baseURL = "https://my-api.plantnet.org/v2"
     
     var netResponse: PlantNetResponse?
@@ -25,7 +24,6 @@ import SwiftData
     
     func setContext(_ modelContext: ModelContext) {
         self.modelContext = modelContext
-        imgService.modelContext = modelContext
     }
 
     func saveResult(_ imgData: [Data]) {
@@ -34,9 +32,8 @@ import SwiftData
             if let netResponse {
                 var paths: [String] = []
                 try imgData.forEach { data in
-                    let path = try imgService.saveImage(data)
+                    let path = try saveImage(data)
                     paths.append(path)
-                  //  print("---> save at path:", path)
                 }
                 let bestNames = uniqueDisplayNames(top: 2)
                 let bestScore = netResponse.bestResult?.score ?? 0.0
@@ -44,7 +41,7 @@ import SwiftData
                 context.insert(record)
                 try context.save()
                 
-                try imgService.enforceLimit()
+                try enforceLimit()
             }
         } catch {
             print(error)
@@ -208,6 +205,49 @@ import SwiftData
             default: throw APIError.apiError(reason: message)
         }
     }
+
+    func saveImage(_ data: Data) throws -> String {
+        let fm = FileManager.default
+        let baseURL = fm.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
+
+        // Ensure directory exists
+        try fm.createDirectory(at: baseURL, withIntermediateDirectories: true)
+
+        let filename = UUID().uuidString + ".jpg"
+        let fileURL = baseURL.appendingPathComponent(filename)
+
+        try data.write(to: fileURL, options: .atomic)
+        return fileURL.path
+    }
+
+    func getImage(from path: String) -> UIImage? {
+        guard FileManager.default.fileExists(atPath: path) else {
+            print("---> file not found at path:", path)
+            return nil
+        }
+        return UIImage(contentsOfFile: path)
+    }
+ 
+    // only keep the last 10 PlantRecords
+    func enforceLimit() throws {
+        let descriptor = FetchDescriptor<PlantRecord>(
+            sortBy: [SortDescriptor(\.date, order: .reverse)]
+        )
+        if let modelContext {
+            let items = try modelContext.fetch(descriptor)
+            if items.count > 10 {
+                let toDelete = items.suffix(from: 10)
+                for item in toDelete {
+                    modelContext.delete(item)
+                    // also delete image files
+                    item.imagePaths.forEach { path in
+                        try? FileManager.default.removeItem(atPath: path)
+                    }
+                }
+            }
+        }
+    }
+    
 }
 
 enum APIError: Swift.Error, LocalizedError {

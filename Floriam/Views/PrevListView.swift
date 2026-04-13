@@ -18,12 +18,7 @@ struct PrevListView: View {
     
     var body: some View {
         ZStack(alignment: .topLeading) {
-            LinearGradient(
-                colors: [Color.green.opacity(0.3),Color.blue.opacity(0.2),Color(.systemBackground)],
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
-            .ignoresSafeArea()
+            backGradient.ignoresSafeArea()
             
             VStack(alignment: .leading) {
                 Button("Done") {
@@ -65,7 +60,7 @@ struct ListRowView: View {
     var body: some View {
         VStack {
             ForEach(plantRecord.imagePaths, id: \.self) { path in
-                if let uiImage = netManager.imgService.getImage(from: path) {
+                if let uiImage = netManager.getImage(from: path) {
                     Image(uiImage: uiImage)
                         .resizable()
                         .scaledToFill()

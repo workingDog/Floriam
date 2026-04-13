@@ -8,6 +8,7 @@
 import Foundation
 import SwiftUI
 
+
 struct KeyView: View {
     @Environment(\.dismiss) var dismiss
 
@@ -15,12 +16,7 @@ struct KeyView: View {
     
     var body: some View {
         ZStack {
-            LinearGradient(
-                colors: [Color.green.opacity(0.3),Color.blue.opacity(0.2),Color(.systemBackground)],
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
-            .ignoresSafeArea()
+            backGradient.ignoresSafeArea()
             
             VStack (alignment: .leading, spacing: 60) {
                 HStack {
@@ -33,7 +29,7 @@ struct KeyView: View {
                 HStack {
                     Spacer()
                     VStack (spacing: 20) {
-                        Text("Copy your key from")
+                        Text("Copy your API key from")
                         Text("[Pl@ntNet](https://my.plantnet.org/)")
                     }
                     Spacer()

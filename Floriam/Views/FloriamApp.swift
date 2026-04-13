@@ -9,6 +9,12 @@ import SwiftUI
 import SwiftData
 
 
+let backGradient = LinearGradient(
+    colors: [Color.green.opacity(0.3),Color.blue.opacity(0.2),Color(.systemBackground)],
+    startPoint: .topLeading,
+    endPoint: .bottomTrailing
+)
+
 @main
 struct FloriamApp: App {
     

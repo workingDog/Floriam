@@ -131,7 +131,10 @@ struct ContentView: View {
                     Image(uiImage: imgItem.uimage)
                         .resizable()
                         .aspectRatio(contentMode: .fit)
+                        .scaledToFill()
                         .frame(maxHeight: .infinity)
+                        .clipShape(RoundedRectangle(cornerRadius: 15))
+                        .clipped()
                 }
             }
             .padding(.horizontal)

@@ -57,8 +57,10 @@ struct ListRowView: View {
                 if let uiImage = netManager.imgService.getImage(from: path) {
                     Image(uiImage: uiImage)
                         .resizable()
-                        .scaledToFit()
+                        .scaledToFill()
                         .frame(width: 200, height: 200)
+                        .clipShape(RoundedRectangle(cornerRadius: 15))
+                        .clipped()
                 }
             }
             VStack(alignment: .leading) {
@@ -66,7 +68,7 @@ struct ListRowView: View {
                     Text(name)
                         .frame(maxWidth: .infinity, alignment: .leading)
                 }
-            }
+            }.padding(10)
         }
     }
 }

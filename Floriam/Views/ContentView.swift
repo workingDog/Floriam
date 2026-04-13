@@ -17,6 +17,7 @@ struct ContentView: View {
     @State private var showPhotoPicker = false
     @State private var showCamera = false
     @State private var showPrevious = false
+    @State private var showSettings = false
     @State private var processing = false
     
     @State private var selectedImages: [ImageItem] = []
@@ -62,6 +63,12 @@ struct ContentView: View {
                             Text("Photos").font(.caption)
                         }
                     }
+                    Spacer()
+                    Button {
+                        showSettings = true
+                    } label: {
+                        Image(systemName: "gear").font(.title2)
+                    }.tint(.gray)
                 }
                 .padding(.horizontal)
                 .padding(.top, 10)
@@ -79,6 +86,9 @@ struct ContentView: View {
             }
             .buttonStyle(.borderedProminent)
             .tint(.green.opacity(0.8))
+        }
+        .sheet(isPresented: $showSettings) {
+            KeyView()
         }
         .fullScreenCover(isPresented: $showCamera, onDismiss: processCamera) {
             CameraView(selectedImages: $selectedImages)

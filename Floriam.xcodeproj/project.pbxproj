@@ -8,12 +8,12 @@
 
 /* Begin PBXBuildFile section */
 		C737C70F2F8C98FC00769F44 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = C737C70E2F8C98FC00769F44 /* README.md */; };
-		C7877A942F8C9FA800EB996B /* picture1.png in Resources */ = {isa = PBXBuildFile; fileRef = C7877A932F8C9FA800EB996B /* picture1.png */; };
+		C76DB5612F8CB95300D18BC3 /* picture2.png in Resources */ = {isa = PBXBuildFile; fileRef = C76DB5602F8CB95300D18BC3 /* picture2.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		C737C70E2F8C98FC00769F44 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
-		C7877A932F8C9FA800EB996B /* picture1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = picture1.png; sourceTree = "<group>"; };
+		C76DB5602F8CB95300D18BC3 /* picture2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = picture2.png; sourceTree = "<group>"; };
 		C7A02C942F8A4070009DF9C0 /* Floriam.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Floriam.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -39,7 +39,7 @@
 		C7A02C8B2F8A4070009DF9C0 = {
 			isa = PBXGroup;
 			children = (
-				C7877A932F8C9FA800EB996B /* picture1.png */,
+				C76DB5602F8CB95300D18BC3 /* picture2.png */,
 				C737C70E2F8C98FC00769F44 /* README.md */,
 				C7A02C962F8A4070009DF9C0 /* Floriam */,
 				C7A02C952F8A4070009DF9C0 /* Products */,
@@ -118,7 +118,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C7877A942F8C9FA800EB996B /* picture1.png in Resources */,
+				C76DB5612F8CB95300D18BC3 /* picture2.png in Resources */,
 				C737C70F2F8C98FC00769F44 /* README.md in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

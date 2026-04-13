@@ -20,7 +20,6 @@ import SwiftData
     var netResponse: PlantNetResponse?
     
     init() {
-        // StoreService.setKey(key: "YOUR-APIKEY") // <-- do this once, and restart
         self.apiKey = StoreService.getKey() ?? ""
     }
     

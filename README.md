@@ -2,6 +2,9 @@
 
 A basic app to identify a plant from a picture taken with the camera or from the Photos App. The app uses [Pl@ntNet API](https://my.plantnet.org/doc/api/openapi) to identify the plant in the picture.
 
+<p float="left">
+  <img src="picture1.png" width="333"  height="444" />
+</p>
 
 ### References
 

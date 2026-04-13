@@ -26,11 +26,41 @@ struct PrevListView: View {
             
             List(plantlist) { plant in
                 ListRowView(plantRecord: plant)
+                    .listRowBackground(Color.clear)
+            }
+            .scrollContentBackground(.hidden)
+            .background(Color.clear)
+        }
+    }
+}
+
+struct ListRowView: View {
+    @Environment(PlantNetManager.self) private var netManager
+    
+    let plantRecord: PlantRecord
+    
+    var body: some View {
+        HStack {
+            ForEach(plantRecord.imagePaths, id: \.self) { path in
+                if let uiImage = netManager.imgService.getImage(from: path) {
+                    Image(uiImage: uiImage)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 200, height: 200)
+                }
+            }
+            VStack(alignment: .leading) {
+                ForEach(plantRecord.bestNames, id: \.self) { name in
+                    Text(name)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                }
             }
         }
     }
 }
 
+
+/*
 struct ListRowView: View {
     @Environment(PlantNetManager.self) private var netManager
     
@@ -62,3 +92,4 @@ struct ListRowView: View {
         }
     }
 }
+*/

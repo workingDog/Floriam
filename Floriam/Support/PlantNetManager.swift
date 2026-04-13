@@ -37,11 +37,10 @@ import SwiftData
                 try imgData.forEach { data in
                     let path = try imgService.saveImage(data)
                     paths.append(path)
-                   // print("---> path: \(path)  data: \(data)")
                 }
-                let names = uniqueDisplayNames(top: 2)
-                // todo score
-                let record = PlantRecord(imagePaths: paths, bestNames: names, score: 0.0)
+                let bestNames = uniqueDisplayNames(top: 2)
+                let bestScore = netResponse.bestResult?.score ?? 0.0
+                let record = PlantRecord(imagePaths: paths, bestNames: bestNames, score: bestScore)
                 context.insert(record)
                 try context.save()
                 

@@ -51,6 +51,12 @@ struct PlantNetResponse: Codable {
     let results: [PlantNetResult]
     let version: String?
     let remainingIdentificationRequests: Int?
+    
+    func getTopScore() -> Double {
+     
+        
+        return 1.0
+    }
 }
 
 extension PlantNetResponse {

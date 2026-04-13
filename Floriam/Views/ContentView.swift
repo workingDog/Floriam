@@ -78,6 +78,7 @@ struct ContentView: View {
                 Spacer()
             }
             .buttonStyle(.borderedProminent)
+            .tint(.green.opacity(0.8))
         }
         .fullScreenCover(isPresented: $showCamera, onDismiss: processCamera) {
             CameraView(selectedImages: $selectedImages)
@@ -143,18 +144,17 @@ struct ContentView: View {
     
     func processCamera() {
         selectedImagesData.removeAll()
-        var tempArr: [UIImage] = []
+        var processedImages: [UIImage] = []
+
         for item in selectedImages {
-            if let data = item.uimage.jpegData(compressionQuality: 0.8) ,
-               let uiimg = UIImage(data: data) {
-                tempArr.append(uiimg)
-                selectedImagesData.append(data)
+            let original = item.uimage
+            let resized = original.resizeImageTo(size: CGSize(width: 333, height: 444))
+            if let compressedData = resized.jpegData(compressionQuality: 0.7) {
+                processedImages.append(resized)
+                selectedImagesData.append(compressedData)
             }
         }
-        let smallerImg = tempArr.compactMap {
-            $0.resizeImageTo(size: CGSize(width: 333, height: 444))
-        }
-        selectedImages = smallerImg.map { ImageItem(uimage: $0) }
+        selectedImages = processedImages.map { ImageItem(uimage: $0) }
         Task {
             processing = true
             await identifySelectedImages()
@@ -165,17 +165,18 @@ struct ContentView: View {
     func processPhotos(_ items: [PhotosPickerItem]) async {
         selectedImagesData.removeAll()
         var tempArr: [UIImage] = []
+
         for item in items {
             if let data = try? await item.loadTransferable(type: Data.self),
-               let uiimg = UIImage(data: data) {
-                tempArr.append(uiimg)
-                selectedImagesData.append(data)
+               let original = UIImage(data: data) {
+                let resized = original.resizeImageTo(size: CGSize(width: 333, height: 444))
+                if let compressedData = resized.jpegData(compressionQuality: 0.7) {
+                    tempArr.append(resized)
+                    selectedImagesData.append(compressedData)
+                }
             }
         }
-        let smallerImg = tempArr.compactMap {
-            $0.resizeImageTo(size: CGSize(width: 333, height: 444))
-        }
-        selectedImages = smallerImg.map { ImageItem(uimage: $0) }
+        selectedImages = tempArr.map { ImageItem(uimage: $0) }
         await identifySelectedImages()
     }
     

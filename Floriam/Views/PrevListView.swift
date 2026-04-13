@@ -13,7 +13,7 @@ struct PrevListView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) var dismiss
     
-    @Query(sort: \PlantRecord.date) var plantlist: [PlantRecord]
+    @Query(sort: \PlantRecord.date, order: .reverse) var plantlist: [PlantRecord]
     
     
     var body: some View {
@@ -30,6 +30,7 @@ struct PrevListView: View {
                     dismiss()
                 }
                 .buttonStyle(.borderedProminent)
+                .tint(.green.opacity(0.8))
                 .padding(10)
                 
                 List {
@@ -62,9 +63,6 @@ struct ListRowView: View {
     let plantRecord: PlantRecord
     
     var body: some View {
-        
-        
-        
         HStack {
             ForEach(plantRecord.imagePaths, id: \.self) { path in
                 if let uiImage = netManager.imgService.getImage(from: path) {

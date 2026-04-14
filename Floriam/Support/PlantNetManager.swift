@@ -58,31 +58,27 @@ import SwiftData
     
     func uniqueDisplayNames(top: Int) -> [String] {
         let results = topResults(top: top)
-        
+
         var seen = Set<String>()
-        var output: [String] = []
+        var names: [String] = []
+
+        func appendIfNew(_ name: String?) {
+            guard let name, !name.isEmpty else { return }
+            guard seen.insert(name).inserted else { return }
+            names.append(name)
+        }
 
         for result in results {
-            // scientific name first
-            if let sci = result.species.scientificName, !sci.isEmpty {
-                if !seen.contains(sci) {
-                    seen.insert(sci)
-                    output.append(sci)
-                }
-            }
+            appendIfNew(result.species.scientificName)
 
-            // common names
             for name in result.species.englishNames ?? [] {
-                if !seen.contains(name) {
-                    seen.insert(name)
-                    output.append(name)
-                }
+                appendIfNew(name)
             }
         }
 
-        return output
+        return names
     }
-    
+
     func checkStatus() async {
         if let url = URL(string: "\(baseURL)/_status") {
             do {

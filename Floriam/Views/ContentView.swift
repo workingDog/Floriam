@@ -108,14 +108,16 @@ struct ContentView: View {
         if processing {
             ProgressView()
                 .progressViewStyle(.circular)
+                .scaleEffect(2.0)
                 .frame(maxWidth: .infinity, alignment: .center)
         } else {
             ScrollView(.vertical) {
+                let names = netManager.uniqueDisplayNames(top: 2)
                 VStack {
-                    if netManager.uniqueDisplayNames(top: 2).isEmpty {
+                    if names.isEmpty {
                         Text("No results")
                     } else {
-                        ForEach(netManager.uniqueDisplayNames(top: 2), id: \.self) { name in
+                        ForEach(names, id: \.self) { name in
                             Text(name)
                         }
                     }

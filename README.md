@@ -1,6 +1,6 @@
 #  Floriam
 
-A basic app to identify a plant from a picture taken with the camera or from the Photos App. The app uses [Pl@ntNet API](https://my.plantnet.org/doc/api/openapi) to identify the plant in the picture.
+A basic app to identify a plant from a picture taken with the camera or from the Photos App. The app uses [Pl@ntNet API](https://my.plantnet.org/doc/api/openapi) to identify the plant in the picture. "The identification engine is based on most advanced deep learning technologies ..."
 
 <p float="left">
   <img src="picture2.png" width="333"  height="444" />

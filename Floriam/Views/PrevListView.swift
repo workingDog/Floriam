@@ -59,16 +59,21 @@ struct ListRowView: View {
     
     var body: some View {
         VStack {
-            ForEach(plantRecord.imagePaths, id: \.self) { path in
-                if let uiImage = netManager.getImage(from: path) {
-                    Image(uiImage: uiImage)
-                        .resizable()
-                        .scaledToFill()
-                        .frame(width: 200, height: 200)
-                        .clipShape(RoundedRectangle(cornerRadius: 15))
-                        .clipped()
+            ScrollView(.horizontal) {
+                HStack {
+                    ForEach(plantRecord.imagePaths, id: \.self) { path in
+                        if let uiImage = netManager.getImage(from: path) {
+                            Image(uiImage: uiImage)
+                                .resizable()
+                                .scaledToFill()
+                                .frame(width: 200, height: 200)
+                                .clipShape(RoundedRectangle(cornerRadius: 15))
+                                .clipped()
+                        }
+                    }
                 }
-            }
+            }.padding(10)
+            
             ScrollView {
                 VStack(alignment: .leading) {
                     ForEach(plantRecord.bestNames, id: \.self) { name in

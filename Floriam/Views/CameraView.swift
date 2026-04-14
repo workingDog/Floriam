@@ -37,6 +37,10 @@ class Coordinator: NSObject, UINavigationControllerDelegate, UIImagePickerContro
         self.picker = picker
     }
     
+    @objc func done() {
+        picker.dismiss()
+    }
+    
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         guard let selectedImage = info[.originalImage] as? UIImage else { return }
         
@@ -45,4 +49,5 @@ class Coordinator: NSObject, UINavigationControllerDelegate, UIImagePickerContro
         self.picker.selectedImages = [ImageItem(uimage: selectedImage)]
         self.picker.dismiss()
     }
+    
 }

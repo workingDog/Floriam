@@ -163,18 +163,16 @@ struct ContentView: View {
     }
     
     func identifySelectedImages() async {
-        // todo multiple images
-        if let imgData1: Data = selectedImages.first?.imgData {
-            do {
-                try await netManager.identify(project: "all", images: [imgData1], organs: nil)
-                if netManager.netResponse?.results.isEmpty == false {
-                    let dataArr = selectedImages.compactMap { $0.imgData }
-                    netManager.saveResult(dataArr)
-                }
-            } catch {
-                print(error)
+        let imgArr: [Data] = Array(selectedImages.prefix(3)).compactMap(\.imgData)
+        do {
+            try await netManager.identify(project: "all", images: imgArr, organs: nil)
+            if netManager.netResponse?.results.isEmpty == false {
+                let dataArr = selectedImages.compactMap { $0.imgData }
+                netManager.saveResult(dataArr)
             }
+        } catch {
+            print(error)
         }
     }
-
+    
 }

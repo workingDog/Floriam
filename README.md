@@ -13,6 +13,9 @@ First select the **gear icon** and add your **api-key** and save.
 
 The **List** keeps only the last 10 identified pictures.
 
+Multiple selections (up to 3) from the **Photos App** can used to identify **one** plant.  
+
+When using the **Camera**, only the one picture is used to identify the plant.
 
 ### References
 

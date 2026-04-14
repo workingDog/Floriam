@@ -49,10 +49,7 @@ struct ImageItem: Identifiable, Hashable {
     
     // for storage
     var imgData: Data? {
-        print("---> original: \(uimage.pngData())")
         let resized = uimage.resizedToFitWidth(333)
-        let temp = resized.jpegData(compressionQuality: 0.7)
-        print("---> resized: \(temp)")
         return resized.jpegData(compressionQuality: 0.7)
     }
 

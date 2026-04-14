@@ -171,8 +171,7 @@ struct ContentView: View {
         do {
             try await netManager.identify(project: "all", images: imgArr, organs: nil)
             if netManager.netResponse?.results.isEmpty == false {
-                let dataArr = selectedImages.compactMap { $0.imgData }
-                netManager.saveResult(dataArr)
+                netManager.saveResult(imgArr)
             }
         } catch {
             print(error)

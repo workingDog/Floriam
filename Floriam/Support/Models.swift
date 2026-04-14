@@ -30,10 +30,14 @@ final class PlantRecord {
 
 extension UIImage {
     
-    func resizeImageTo(size: CGSize) -> UIImage {
-        let renderer = UIGraphicsImageRenderer(size: size)
+    func resizedToFitWidth(_ targetWidth: CGFloat) -> UIImage {
+        let scale = targetWidth / self.size.width
+        let newHeight = self.size.height * scale
+        let newSize = CGSize(width: targetWidth, height: newHeight)
+        
+        let renderer = UIGraphicsImageRenderer(size: newSize)
         return renderer.image { _ in
-            self.draw(in: CGRect(origin: .zero, size: size))
+            self.draw(in: CGRect(origin: .zero, size: newSize))
         }
     }
     
@@ -45,9 +49,13 @@ struct ImageItem: Identifiable, Hashable {
     
     // for storage
     var imgData: Data? {
-        let resized = uimage.resizeImageTo(size: CGSize(width: 333, height: 444))
+        print("---> original: \(uimage.pngData())")
+        let resized = uimage.resizedToFitWidth(333)
+        let temp = resized.jpegData(compressionQuality: 0.7)
+        print("---> resized: \(temp)")
         return resized.jpegData(compressionQuality: 0.7)
     }
+
 }
 
 struct PlantNetResponse: Codable {

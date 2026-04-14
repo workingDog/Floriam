@@ -95,7 +95,7 @@ import SwiftData
     }
     
     func identify(project: String = "all", images: [Data], organs: [String]? = nil) async throws {
-        
+
         var components = URLComponents(string: "\(baseURL)/identify/\(project)")!
         components.queryItems = [
             URLQueryItem(name: "api-key", value: apiKey)

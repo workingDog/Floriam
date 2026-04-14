@@ -85,7 +85,7 @@ struct ContentView: View {
         .sheet(isPresented: $showSettings) {
             KeyView()
         }
-        .fullScreenCover(isPresented: $showCamera, onDismiss: processCamera) {
+        .fullScreenCover(isPresented: $showCamera, onDismiss: doIdentify) {
             CameraView(selectedImages: $selectedImages)
         }
         .fullScreenCover(isPresented: $showPrevious) {
@@ -95,11 +95,8 @@ struct ContentView: View {
         .task(id: photoItems) {
             guard !photoItems.isEmpty else { return }
             let items = photoItems
+            await processPhotos(items)
             photoItems = []
-            processingTask?.cancel()
-            processingTask = Task {
-                await processPhotos(items)
-            }
         }
         .task(id: modelContext) {
             netManager.setContext(modelContext)
@@ -145,8 +142,9 @@ struct ContentView: View {
         }.padding(10)
     }
     
-    func processCamera() {
-        Task {
+    func doIdentify() {
+        processingTask?.cancel()
+        processingTask = Task {
             processing = true
             await identifySelectedImages()
             processing = false
@@ -161,9 +159,7 @@ struct ContentView: View {
                 selectedImages.append(ImageItem(uimage: img))
             }
         }
-        processing = true
-        await identifySelectedImages()
-        processing = false
+        doIdentify()
     }
     
     func identifySelectedImages() async {

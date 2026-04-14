@@ -57,15 +57,16 @@ struct PlantNetResponse: Codable {
     let results: [PlantNetResult]
     let version: String?
     let remainingIdentificationRequests: Int?
-}
-
-extension PlantNetResponse {
+    
     var bestResult: PlantNetResult? {
         results.max(by: { $0.score < $1.score })
     }
 }
 
-struct PredictedOrgan: Codable {
+// organ: auto, leaf, flower, fruit, bark, habit, scan, branch, sheet, other, drawing, seed, bud, anatomy, aerial
+struct PredictedOrgan: Identifiable, Hashable, Codable {
+    let id = UUID()
+    
     let image, filename, organ: String?
     let score: Double?
 }
@@ -76,7 +77,7 @@ struct Query: Codable {
     let includeRelatedImages, noReject: Bool?
 }
 
-struct PlantNetResult:  Identifiable, Codable {
+struct PlantNetResult: Identifiable, Codable {
     let id = UUID()
     
     let score: Double

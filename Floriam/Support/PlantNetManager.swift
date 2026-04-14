@@ -191,13 +191,16 @@ import SwiftData
         
         switch http.statusCode {
             case 200..<300: return
+            case 400: throw APIError.apiError(reason: "Bad Request")
             case 401: throw APIError.apiError(reason: "Unauthorized")
-            case 402: throw APIError.apiError(reason: "Quota exceeded")
-            case 403: throw APIError.apiError(reason: "Resource forbidden")
-            case 404: throw APIError.apiError(reason: "Resource not found")
-            case 429: throw APIError.apiError(reason: "Requesting too quickly")
+            case 404: throw APIError.apiError(reason: "Species Not Found")
+            case 413: throw APIError.apiError(reason: "Payload Too Large")
+            case 414: throw APIError.apiError(reason: "URI Too Long")
+            case 415: throw APIError.apiError(reason: "Unsupported Media Type")
+            case 429: throw APIError.apiError(reason: "Too Many Requests")
+            case 500: throw APIError.apiError(reason: "Internal Server Error")
             case 405..<500: throw APIError.apiError(reason: "Client error")
-            case 500..<600: throw APIError.apiError(reason: "Server error")
+            case 501..<600: throw APIError.apiError(reason: "Server error")
             default: throw APIError.apiError(reason: message)
         }
     }

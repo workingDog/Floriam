@@ -48,9 +48,14 @@ struct ImageItem: Identifiable, Hashable {
     var uimage: UIImage
     
     // for storage
-    var imgData: Data? {
+    var imgDataStorage: Data? {
         let resized = uimage.resizedToFitWidth(333)
-        return resized.jpegData(compressionQuality: 0.7)
+        return resized.jpegData(compressionQuality: 0.6)
+    }
+    
+    var imgData: Data? {
+        let resized = uimage.resizedToFitWidth(1280)
+        return resized.jpegData(compressionQuality: 0.9)
     }
 
 }

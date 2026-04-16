@@ -167,11 +167,14 @@ struct ContentView: View {
     }
     
     func identifySelectedImages() async {
+        // slightly compressed for identification
         let imgArr: [Data] = Array(selectedImages.prefix(3)).compactMap(\.imgData)
+        // strongly compressed for storage
+        let imgStore: [Data] = Array(selectedImages.prefix(3)).compactMap(\.imgDataStorage)
         do {
             try await netManager.identify(project: "all", images: imgArr, organs: nil)
             if netManager.netResponse?.results.isEmpty == false {
-                netManager.saveResult(imgArr)
+                netManager.saveResult(imgStore)
             }
         } catch {
             print(error)

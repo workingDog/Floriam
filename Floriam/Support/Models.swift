@@ -40,18 +40,12 @@ extension UIImage {
             self.draw(in: CGRect(origin: .zero, size: newSize))
         }
     }
-    
+  
 }
 
 struct ImageItem: Identifiable, Hashable {
     let id = UUID()
     var uimage: UIImage
-    
-    // for storage
-    var imgDataStorage: Data? {
-        let resized = uimage.resizedToFitWidth(333)
-        return resized.jpegData(compressionQuality: 0.6)
-    }
     
     var imgData: Data? {
         let resized = uimage.resizedToFitWidth(1280)

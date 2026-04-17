@@ -26,5 +26,4 @@ When using the **Camera**, only the one picture is used to identify the plant.
 
 ### Requirements
 
--   require a valid **api-key** by creating an account, see [Pl@ntNet](https://my.plantnet.org/). A free account can be used.
-
+-   A valid **API key** is required. Create an account at [Pl@ntNet](https://my.plantnet.org/) to obtain one. A free account can be used.

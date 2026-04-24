@@ -60,6 +60,8 @@ import SwiftData
     }
     
     private func uniqueDisplayNames(top: Int) async {
+        displayNames = []
+        
         let results = topResults(top: top)
         var uniqueSet = Set<String>()
         

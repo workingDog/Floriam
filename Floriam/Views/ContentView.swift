@@ -184,6 +184,7 @@ struct ContentView: View {
                 await netManager.saveResult(imgArr)
             }
         } catch {
+            netManager.displayNames = []
             print(error)
         }
     }

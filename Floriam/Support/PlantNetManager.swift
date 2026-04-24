@@ -29,7 +29,7 @@ import SwiftData
     func setContext(_ modelContext: ModelContext) {
         self.modelContext = modelContext
     }
-
+    
     func saveResult(_ imgData: [Data]) async {
         guard let context = modelContext else { return }
         do {
@@ -62,33 +62,34 @@ import SwiftData
     private func uniqueDisplayNames(top: Int) async {
         let results = topResults(top: top)
         var uniqueSet = Set<String>()
-
+        
         for result in results {
             if let name = result.species.scientificName {
                 uniqueSet.insert(name.trimLowercased())
             }
- 
+            
             for name in result.species.englishNames ?? [] {
                 uniqueSet.insert(name.trimLowercased())
             }
-            
-            if let sciName = result.species.scientificNameWithoutAuthor {
-                do {
-                    let response = try await fetchVernacularNames(scientificName: sciName)
-                    //       print("---> response lang: \(response.map(\.language))")
-                    let vnames = response
-                        .filter { ["en", "eng"].contains($0.language?.lowercased()) }
-                        .map(\.vernacularName)
-                    
-                    vnames.forEach { uniqueSet.insert($0.trimLowercased()) }
-                } catch {
-                    print(error)
-                }
-            }
-        }
-        displayNames = Array(uniqueSet)
-    }
 
+            /*
+             // does not seem to add value
+            do {
+                let response = try await fetchVernacularNamesFrom(gbif: result.gbif.id)
+                let vnames = response
+                    .filter { ["en", "eng"].contains($0.language?.lowercased()) }
+                    .map(\.vernacularName)
+                
+                vnames.forEach { uniqueSet.insert($0.trimLowercased()) }
+            } catch {
+                print(error)
+            }
+            */
+            
+            displayNames = Array(uniqueSet)
+        }
+    }
+    
     func checkStatus() async {
         if let url = URL(string: "\(baseURL)/_status") {
             do {
@@ -105,7 +106,7 @@ import SwiftData
     }
     
     func identify(project: String = "all", images: [Data], organs: [String]? = nil) async throws {
-
+        
         var components = URLComponents(string: "\(baseURL)/identify/\(project)")!
         components.queryItems = [
             URLQueryItem(name: "api-key", value: apiKey)
@@ -141,7 +142,7 @@ import SwiftData
         
         let (data, response) = try await URLSession.shared.data(for: request)
         
-    //    print("---> response: \(String(data: data, encoding: .utf8) as AnyObject)")
+        //    print("---> response: \n \(String(data: data, encoding: .utf8) as AnyObject) \n")
         
         try validate(response: response, data: data)
         
@@ -225,21 +226,21 @@ import SwiftData
             default: throw APIError.apiError(reason: message)
         }
     }
-
+    
     func saveImage(_ data: Data) throws -> String {
         let fm = FileManager.default
         let baseURL = fm.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
-
+        
         // Ensure directory exists
         try fm.createDirectory(at: baseURL, withIntermediateDirectories: true)
-
+        
         let filename = UUID().uuidString + ".jpg"
         let fileURL = baseURL.appendingPathComponent(filename)
-
+        
         try data.write(to: fileURL, options: .atomic)
         return fileURL.path
     }
-
+    
     func getImage(from path: String) -> UIImage? {
         guard FileManager.default.fileExists(atPath: path) else {
             print("---> file not found at path:", path)
@@ -247,7 +248,7 @@ import SwiftData
         }
         return UIImage(contentsOfFile: path)
     }
- 
+    
     // only keep the last 10 PlantRecords
     func enforceLimit() throws {
         let descriptor = FetchDescriptor<PlantRecord>(
@@ -280,7 +281,7 @@ import SwiftData
             return nil
         }
     }
-
+    
     func fetchVernacularNames(scientificName: String) async throws -> [GBIFVernacularName] {
         if let gbifID = try await fetchGBIFID(scientificName: scientificName),
            let url = URL(string: "\(baseGBIF)/\(gbifID)/vernacularNames") {
@@ -298,7 +299,36 @@ import SwiftData
             return []
         }
     }
-
+    
+    func fetchVernacularNamesFrom(gbif: String) async throws -> [GBIFVernacularName] {
+        if let url = URL(string: "\(baseGBIF)/\(gbif)/vernacularNames") {
+            
+            let (data, response) = try await URLSession.shared.data(from: url)
+            
+             print("---> response: \n \(String(data: data, encoding: .utf8) as AnyObject) \n")
+            
+            guard let http = response as? HTTPURLResponse,
+                  (200...299).contains(http.statusCode) else {
+                throw URLError(.badServerResponse)
+            }
+            
+            let decoded = try JSONDecoder().decode(GBIFVernacularResponse.self, from: data)
+            return decoded.results
+        } else {
+            return []
+        }
+    }
+    
+    
+    // does not work
+//    func fetchWikipediaSummary(name: String) async throws {
+//        let encoded = name.replacingOccurrences(of: " ", with: "_")
+//        let url = URL(string: "https://en.wikipedia.org/api/rest_v1/page/summary/\(encoded)")!
+//        let (data, _) = try await URLSession.shared.data(from: url)
+//        
+//        print("---> wiki response: \n \(String(data: data, encoding: .utf8) as AnyObject) \n")
+//    }
+ 
 }
 
 enum APIError: Swift.Error, LocalizedError {
@@ -307,9 +337,9 @@ enum APIError: Swift.Error, LocalizedError {
     
     var errorDescription: String? {
         switch self {
-            case .unknown: return "Unknown error"
-            case .apiError(let reason), .parserError(let reason): return reason
-            case .networkError(let from): return from.localizedDescription
+        case .unknown: return "Unknown error"
+        case .apiError(let reason), .parserError(let reason): return reason
+        case .networkError(let from): return from.localizedDescription
         }
     }
 }

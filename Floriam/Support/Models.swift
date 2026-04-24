@@ -93,6 +93,18 @@ struct PlantNetResult: Identifiable, Codable, Equatable {
     
     let score: Double
     let species: Species
+    
+    let gbif: Gbif?
+    let powo: Gbif?
+    let iucn: Iucn?
+}
+
+struct Gbif: Codable, Equatable {
+    let id: String
+}
+
+struct Iucn: Codable, Equatable {
+    let id, category: String
 }
 
 struct Species: Codable, Equatable {

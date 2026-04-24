@@ -66,12 +66,10 @@ import SwiftData
         for result in results {
             if let name = result.species.scientificName {
                 uniqueSet.insert(name.trimLowercased())
-                print("---> scientificName: \(name)")
             }
  
             for name in result.species.englishNames ?? [] {
                 uniqueSet.insert(name.trimLowercased())
-                print("---> name: \(name)")
             }
             
             if let sciName = result.species.scientificNameWithoutAuthor {
@@ -83,13 +81,11 @@ import SwiftData
                         .map(\.vernacularName)
                     
                     vnames.forEach { uniqueSet.insert($0.trimLowercased()) }
-                    print("---> vnames: \(vnames)")
                 } catch {
                     print(error)
                 }
             }
         }
-        print()
         displayNames = Array(uniqueSet)
     }
 

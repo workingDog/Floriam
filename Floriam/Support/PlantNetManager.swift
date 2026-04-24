@@ -151,24 +151,33 @@ import SwiftData
     }
     
     func fetchProjects() async throws -> [Project] {
-        let url = URL(string: "\(baseURL)/projects?api-key=\(apiKey)")!
-        let (data, response) = try await URLSession.shared.data(from: url)
-        try validate(response: response, data: data)
-        return try JSONDecoder().decode([Project].self, from: data)
+        if let url = URL(string: "\(baseURL)/projects?api-key=\(apiKey)") {
+            let (data, response) = try await URLSession.shared.data(from: url)
+            try validate(response: response, data: data)
+            return try JSONDecoder().decode([Project].self, from: data)
+        } else {
+            return []
+        }
     }
     
     func fetchAllSpecies() async throws -> [SpeciesListItem] {
-        let url = URL(string: "\(baseURL)/species?api-key=\(apiKey)")!
-        let (data, response) = try await URLSession.shared.data(from: url)
-        try validate(response: response, data: data)
-        return try JSONDecoder().decode([SpeciesListItem].self, from: data)
+        if let url = URL(string: "\(baseURL)/species?api-key=\(apiKey)") {
+            let (data, response) = try await URLSession.shared.data(from: url)
+            try validate(response: response, data: data)
+            return try JSONDecoder().decode([SpeciesListItem].self, from: data)
+        } else {
+            return []
+        }
     }
     
     func fetchSpecies(project: String) async throws -> [SpeciesListItem] {
-        let url = URL(string: "\(baseURL)/projects/\(project)/species?api-key=\(apiKey)")!
-        let (data, response) = try await URLSession.shared.data(from: url)
-        try validate(response: response, data: data)
-        return try JSONDecoder().decode([SpeciesListItem].self, from: data)
+        if let url = URL(string: "\(baseURL)/projects/\(project)/species?api-key=\(apiKey)") {
+            let (data, response) = try await URLSession.shared.data(from: url)
+            try validate(response: response, data: data)
+            return try JSONDecoder().decode([SpeciesListItem].self, from: data)
+        } else {
+            return []
+        }
     }
     
     func survey(project: String, image: Data) async throws -> SurveyResponse {
@@ -260,18 +269,21 @@ import SwiftData
     }
     
     func fetchGBIFID(scientificName: String) async throws -> Int? {
-        let encoded = scientificName.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!
-        let url = URL(string: "\(baseGBIF)/match?name=\(encoded)")!
-        
-        let (data, _) = try await URLSession.shared.data(from: url)
-        let decoded = try JSONDecoder().decode(GBIFMatchResponse.self, from: data)
-        
-        return decoded.usageKey
+        if let encoded = scientificName.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed),
+           let url = URL(string: "\(baseGBIF)/match?name=\(encoded)") {
+            
+            let (data, _) = try await URLSession.shared.data(from: url)
+            let decoded = try JSONDecoder().decode(GBIFMatchResponse.self, from: data)
+            
+            return decoded.usageKey
+        } else {
+            return nil
+        }
     }
 
     func fetchVernacularNames(scientificName: String) async throws -> [GBIFVernacularName] {
-        if let gbifID = try await fetchGBIFID(scientificName: scientificName) {
-            let url = URL(string: "\(baseGBIF)/\(gbifID)/vernacularNames")!
+        if let gbifID = try await fetchGBIFID(scientificName: scientificName),
+           let url = URL(string: "\(baseGBIF)/\(gbifID)/vernacularNames") {
             
             let (data, response) = try await URLSession.shared.data(from: url)
             

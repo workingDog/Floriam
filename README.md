@@ -23,6 +23,9 @@ When using the **Camera**, only the one picture is used to identify the plant.
 
 -   [Pl@ntNet API](https://my.plantnet.org/doc/api/openapi)
 
+-   [Global Biodiversity Information Facility](https://www.gbif.org/)
+
+-   [GBIF API Reference](https://techdocs.gbif.org/en/openapi/)
 
 ### Requirements
 

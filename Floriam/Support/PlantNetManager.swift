@@ -16,7 +16,11 @@ import SwiftData
     let apiKey: String
     let baseURL = "https://my-api.plantnet.org/v2"
     
+    let baseGBIF = "https://api.gbif.org/v1/species"
+    
     var netResponse: PlantNetResponse?
+    
+    var displayNames: [String] = []
     
     init() {
         self.apiKey = KeychainInterface.getKey() ?? ""
@@ -26,7 +30,7 @@ import SwiftData
         self.modelContext = modelContext
     }
 
-    func saveResult(_ imgData: [Data]) {
+    func saveResult(_ imgData: [Data]) async {
         guard let context = modelContext else { return }
         do {
             if let netResponse {
@@ -35,9 +39,8 @@ import SwiftData
                     let path = try saveImage(data)
                     paths.append(path)
                 }
-                let bestNames = uniqueDisplayNames(top: 2)
                 let bestScore = netResponse.bestResult?.score ?? 0.0
-                let record = PlantRecord(imagePaths: paths, bestNames: bestNames, score: bestScore)
+                let record = PlantRecord(imagePaths: paths, bestNames: displayNames, score: bestScore)
                 context.insert(record)
                 try context.save()
                 
@@ -48,7 +51,7 @@ import SwiftData
         }
     }
     
-    func topResults(top: Int) -> [PlantNetResult] {
+    private func topResults(top: Int) -> [PlantNetResult] {
         guard let netResponse else { return [] }
         return netResponse.results
             .sorted(by: { $0.score > $1.score }) // highest first
@@ -56,27 +59,38 @@ import SwiftData
             .map { $0 }
     }
     
-    func uniqueDisplayNames(top: Int) -> [String] {
+    private func uniqueDisplayNames(top: Int) async {
         let results = topResults(top: top)
-
-        var seen = Set<String>()
-        var names: [String] = []
-
-        func appendIfNew(_ name: String?) {
-            guard let name, !name.isEmpty else { return }
-            guard seen.insert(name).inserted else { return }
-            names.append(name)
-        }
+        var uniqueSet = Set<String>()
 
         for result in results {
-            appendIfNew(result.species.scientificName)
-
+            if let name = result.species.scientificName {
+                uniqueSet.insert(name.trimLowercased())
+                print("---> scientificName: \(name)")
+            }
+ 
             for name in result.species.englishNames ?? [] {
-                appendIfNew(name)
+                uniqueSet.insert(name.trimLowercased())
+                print("---> name: \(name)")
+            }
+            
+            if let sciName = result.species.scientificNameWithoutAuthor {
+                do {
+                    let response = try await fetchVernacularNames(scientificName: sciName)
+                    //       print("---> response lang: \(response.map(\.language))")
+                    let vnames = response
+                        .filter { ["en", "eng"].contains($0.language?.lowercased()) }
+                        .map(\.vernacularName)
+                    
+                    vnames.forEach { uniqueSet.insert($0.trimLowercased()) }
+                    print("---> vnames: \(vnames)")
+                } catch {
+                    print(error)
+                }
             }
         }
-
-        return names
+        print()
+        displayNames = Array(uniqueSet)
     }
 
     func checkStatus() async {
@@ -136,6 +150,8 @@ import SwiftData
         try validate(response: response, data: data)
         
         self.netResponse = try JSONDecoder().decode(PlantNetResponse.self, from: data)
+        
+        await uniqueDisplayNames(top: 1)
     }
     
     func fetchProjects() async throws -> [Project] {
@@ -247,6 +263,34 @@ import SwiftData
         }
     }
     
+    func fetchGBIFID(scientificName: String) async throws -> Int? {
+        let encoded = scientificName.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!
+        let url = URL(string: "\(baseGBIF)/match?name=\(encoded)")!
+        
+        let (data, _) = try await URLSession.shared.data(from: url)
+        let decoded = try JSONDecoder().decode(GBIFMatchResponse.self, from: data)
+        
+        return decoded.usageKey
+    }
+
+    func fetchVernacularNames(scientificName: String) async throws -> [GBIFVernacularName] {
+        if let gbifID = try await fetchGBIFID(scientificName: scientificName) {
+            let url = URL(string: "\(baseGBIF)/\(gbifID)/vernacularNames")!
+            
+            let (data, response) = try await URLSession.shared.data(from: url)
+            
+            guard let http = response as? HTTPURLResponse,
+                  (200...299).contains(http.statusCode) else {
+                throw URLError(.badServerResponse)
+            }
+            
+            let decoded = try JSONDecoder().decode(GBIFVernacularResponse.self, from: data)
+            return decoded.results
+        } else {
+            return []
+        }
+    }
+
 }
 
 enum APIError: Swift.Error, LocalizedError {
@@ -261,43 +305,3 @@ enum APIError: Swift.Error, LocalizedError {
         }
     }
 }
-
-
-
-
-/*
- 
- // todo
- 
- import NaturalLanguage
-
- func detectLanguage(for text: String) -> NLLanguage? {
-     let recognizer = NLLanguageRecognizer()
-     recognizer.processString(text)
-     return recognizer.dominantLanguage
- }
- 
- func englishNames(from names: [String]) -> [String] {
-     names.filter { name in
-         detectLanguage(for: name) == .english
-     }
- }
- 
- if let names = best.species.commonNames {
-     let english = englishNames(from: names)
-
-     ForEach(english, id: \.self) { name in
-         Text(name)
-     }
- }
- 
- func preferredNames(from names: [String]) -> [String] {
-     names.filter { name in
-         if let lang = detectLanguage(for: name) {
-             return lang == .japanese || lang == .english
-         }
-         return false
-     }
- }
-
- */

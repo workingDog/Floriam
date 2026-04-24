@@ -23,9 +23,9 @@ struct ContentView: View {
     @State private var selectedImages: [ImageItem] = []
     @State private var photoItems: [PhotosPickerItem] = []
     
-    @State private var hasResults = false
     @State private var processingTask: Task<Void, Never>?
     
+
     var body: some View {
         ZStack {
             backGradient.ignoresSafeArea()
@@ -125,12 +125,11 @@ struct ContentView: View {
                 .frame(maxWidth: .infinity, alignment: .center)
         } else {
             ScrollView(.vertical) {
-                let names = netManager.uniqueDisplayNames(top: 1)
                 VStack {
-                    if hasResults && names.isEmpty {
+                    if netManager.displayNames.isEmpty {
                         Text("No results")
                     } else {
-                        ForEach(names, id: \.self) { name in
+                        ForEach(netManager.displayNames, id: \.self) { name in
                             Text(name).font(.title2)
                         }
                     }
@@ -163,7 +162,6 @@ struct ContentView: View {
             processing = true
             await identifySelectedImages()
             processing = false
-            hasResults = true
         }
     }
     
@@ -182,8 +180,8 @@ struct ContentView: View {
         let imgArr: [Data] = Array(selectedImages.prefix(3)).compactMap(\.imgData)
         do {
             try await netManager.identify(project: "all", images: imgArr, organs: nil)
-            if netManager.netResponse?.results.isEmpty == false {
-                netManager.saveResult(imgArr)
+            if let response = netManager.netResponse, !response.results.isEmpty {
+                await netManager.saveResult(imgArr)
             }
         } catch {
             print(error)

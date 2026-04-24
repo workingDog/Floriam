@@ -10,6 +10,13 @@ import SwiftData
 import UIKit
 
 
+extension String {
+    func trimLowercased() -> String {
+        trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+    }
+}
+
+
 @Model
 final class PlantRecord {
     @Attribute(.unique) var plantId: UUID
@@ -54,7 +61,7 @@ struct ImageItem: Identifiable, Hashable {
 
 }
 
-struct PlantNetResponse: Codable {
+struct PlantNetResponse: Codable, Equatable {
     let query: Query
     let predictedOrgans: [PredictedOrgan]?
     let language, preferedReferential, bestMatch: String?
@@ -68,27 +75,27 @@ struct PlantNetResponse: Codable {
 }
 
 // organ: auto, leaf, flower, fruit, bark, habit, scan, branch, sheet, other, drawing, seed, bud, anatomy, aerial
-struct PredictedOrgan: Identifiable, Hashable, Codable {
+struct PredictedOrgan: Identifiable, Hashable, Codable, Equatable {
     let id = UUID()
     
     let image, filename, organ: String?
     let score: Double?
 }
 
-struct Query: Codable {
+struct Query: Codable, Equatable {
     let project: String?
     let images, organs: [String]?
     let includeRelatedImages, noReject: Bool?
 }
 
-struct PlantNetResult: Identifiable, Codable {
+struct PlantNetResult: Identifiable, Codable, Equatable {
     let id = UUID()
     
     let score: Double
     let species: Species
 }
 
-struct Species: Codable {
+struct Species: Codable, Equatable {
     let scientificNameWithoutAuthor: String?
     let scientificNameAuthorship: String?
     let scientificName: String?
@@ -104,7 +111,7 @@ struct Species: Codable {
  
 }
 
-struct Taxonomy: Codable {
+struct Taxonomy: Codable, Equatable {
     let scientificNameWithoutAuthor: String?
     let scientificNameAuthorship: String?
     let scientificName: String?
@@ -136,4 +143,31 @@ struct SurveyResults: Codable {
     let nb_sub_queries: Int
     let nb_matching_sub_queries: Int
     let uncovered: Double
+}
+
+
+
+struct GBIFMatchResponse: Decodable {
+    let usageKey: Int?
+    let scientificName: String?
+    let matchType: String?
+}
+
+func bestCommonName(from names: [GBIFVernacularName]) -> String? {
+    // Prefer English
+    if let english = names.first(where: { $0.language == "eng" }) {
+        return english.vernacularName
+    }
+    
+    // Fallback
+    return names.first?.vernacularName
+}
+
+struct GBIFVernacularName: Decodable {
+    let vernacularName: String
+    let language: String?
+}
+
+struct GBIFVernacularResponse: Decodable {
+    let results: [GBIFVernacularName]
 }

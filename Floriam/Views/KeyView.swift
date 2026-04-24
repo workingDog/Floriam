@@ -29,7 +29,7 @@ struct KeyView: View {
                 HStack {
                     Spacer()
                     VStack (spacing: 20) {
-                        Text("Copy your API key from")
+                        Text("Add your key from")
                         Text("[Pl@ntNet](https://my.plantnet.org/)")
                     }
                     Spacer()

@@ -46,7 +46,7 @@ struct ContentView: View {
                     } label: {
                         VStack {
                             Image(systemName: "list.clipboard").font(.title2)
-                            Text("List").font(.caption)
+                            Text("History").font(.caption)
                         }
                     }
                     Spacer()
@@ -130,7 +130,7 @@ struct ContentView: View {
                         Text("No results")
                     } else {
                         ForEach(netManager.displayNames, id: \.self) { name in
-                            Text(name).font(.title2)
+                            Text(name).font(.title3)
                         }
                     }
                 }.padding(10)

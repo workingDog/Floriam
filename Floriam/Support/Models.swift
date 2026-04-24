@@ -16,6 +16,20 @@ extension String {
     }
 }
 
+extension UIImage {
+    
+    func resizedToFitWidth(_ targetWidth: CGFloat) -> UIImage {
+        let scale = targetWidth / self.size.width
+        let newHeight = self.size.height * scale
+        let newSize = CGSize(width: targetWidth, height: newHeight)
+        
+        let renderer = UIGraphicsImageRenderer(size: newSize)
+        return renderer.image { _ in
+            self.draw(in: CGRect(origin: .zero, size: newSize))
+        }
+    }
+  
+}
 
 @Model
 final class PlantRecord {
@@ -32,22 +46,6 @@ final class PlantRecord {
         self.bestNames = bestNames
         self.score = score
     }
-}
-
-
-extension UIImage {
-    
-    func resizedToFitWidth(_ targetWidth: CGFloat) -> UIImage {
-        let scale = targetWidth / self.size.width
-        let newHeight = self.size.height * scale
-        let newSize = CGSize(width: targetWidth, height: newHeight)
-        
-        let renderer = UIGraphicsImageRenderer(size: newSize)
-        return renderer.image { _ in
-            self.draw(in: CGRect(origin: .zero, size: newSize))
-        }
-    }
-  
 }
 
 struct ImageItem: Identifiable, Hashable {
@@ -157,22 +155,12 @@ struct SurveyResults: Codable {
     let uncovered: Double
 }
 
-
+// --- for GBIF API
 
 struct GBIFMatchResponse: Decodable {
     let usageKey: Int?
     let scientificName: String?
     let matchType: String?
-}
-
-func bestCommonName(from names: [GBIFVernacularName]) -> String? {
-    // Prefer English
-    if let english = names.first(where: { $0.language == "eng" }) {
-        return english.vernacularName
-    }
-    
-    // Fallback
-    return names.first?.vernacularName
 }
 
 struct GBIFVernacularName: Decodable {
@@ -182,4 +170,11 @@ struct GBIFVernacularName: Decodable {
 
 struct GBIFVernacularResponse: Decodable {
     let results: [GBIFVernacularName]
+
+    var bestCommonName: String? {
+        if let english = results.first(where: { $0.language == "eng" }) {
+            return english.vernacularName
+        }
+        return results.first?.vernacularName
+    }
 }

@@ -320,17 +320,7 @@ import SwiftData
             return []
         }
     }
-    
-    
-    // does not work
-//    func fetchWikipediaSummary(name: String) async throws {
-//        let encoded = name.replacingOccurrences(of: " ", with: "_")
-//        let url = URL(string: "https://en.wikipedia.org/api/rest_v1/page/summary/\(encoded)")!
-//        let (data, _) = try await URLSession.shared.data(from: url)
-//        
-//        print("---> wiki response: \n \(String(data: data, encoding: .utf8) as AnyObject) \n")
-//    }
- 
+
 }
 
 enum APIError: Swift.Error, LocalizedError {

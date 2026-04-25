@@ -11,16 +11,9 @@ import SwiftData
 
 @Observable class PlantNetManager {
 
-    private let defaultHist = 10.0
-
     var maxHistory: Double {
-        get {
-            let value = UserDefaults.standard.double(forKey: "maxHistory")
-            return value == 0 ? defaultHist : value
-        }
-        set {
-            UserDefaults.standard.set(newValue, forKey: "maxHistory")
-        }
+        get { UserDefaults.standard.double(forKey: "maxHistory") }
+        set { UserDefaults.standard.set(newValue, forKey: "maxHistory") }
     }
     
     @ObservationIgnored var modelContext: ModelContext?

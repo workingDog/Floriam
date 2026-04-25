@@ -43,6 +43,9 @@ struct FloriamApp: App {
            WindowGroup {
                ContentView()
                    .environment(netManager)
+                   .onAppear{
+                       UserDefaults.standard.register(defaults: ["maxHistory": 10.0])
+                   }
            }
            .modelContainer(sharedModelContainer)
        }

@@ -9,12 +9,13 @@ import SwiftData
 
 
 struct PrevListView: View {
-    @Environment(PlantNetManager.self) private var netManager
     @Environment(\.modelContext) private var modelContext
+    @Environment(PlantNetManager.self) private var netManager
     @Environment(\.dismiss) var dismiss
     
     @Query(sort: \PlantRecord.date, order: .reverse) var plantlist: [PlantRecord]
     
+    @State private var sharedImage: ShareImage?
     
     var body: some View {
         ZStack(alignment: .topLeading) {
@@ -30,7 +31,7 @@ struct PrevListView: View {
                 
                 List {
                     ForEach(plantlist) { plant in
-                        ListRowView(plantRecord: plant)
+                        ListRowView(plantRecord: plant, sharedImage: $sharedImage)
                             .listRowBackground(Color.clear)
                     }
                     .onDelete(perform: deleteItems)
@@ -38,6 +39,9 @@ struct PrevListView: View {
                 .scrollContentBackground(.hidden)
                 .background(Color.clear)
             }
+        }
+        .sheet(item: $sharedImage) { item in
+            ShareSheet(items: [item.image])
         }
     }
     
@@ -53,35 +57,50 @@ struct PrevListView: View {
 
 struct ListRowView: View {
     @Environment(PlantNetManager.self) private var netManager
-    @Environment(\.dismiss) var dismiss
     
     let plantRecord: PlantRecord
+    @Binding var sharedImage: ShareImage?
     
     var body: some View {
-        VStack {
-            ScrollView(.horizontal) {
-                HStack {
-                    ForEach(plantRecord.imagePaths, id: \.self) { path in
-                        if let uiImage = netManager.getImage(from: path) {
-                            Image(uiImage: uiImage)
-                                .resizable()
-                                .scaledToFill()
-                                .frame(width: 200, height: 200)
-                                .clipShape(RoundedRectangle(cornerRadius: 15))
-                                .clipped()
+            VStack {
+                ScrollView(.horizontal) {
+                    HStack {
+                        ForEach(plantRecord.imagePaths, id: \.self) { path in
+                            if let uiImage = netManager.getImage(from: path) {
+                                Image(uiImage: uiImage)
+                                    .resizable()
+                                    .scaledToFill()
+                                    .frame(width: 200, height: 200)
+                                    .clipShape(RoundedRectangle(cornerRadius: 15))
+                                    .clipped()
+                                    .onLongPressGesture {
+                                        sharedImage = ShareImage(image: uiImage)
+                                    }
+                            }
+                        }
+                    }
+                }.padding(10)
+                
+                ScrollView(.vertical) {
+                    VStack(alignment: .leading) {
+                        ForEach(plantRecord.bestNames, id: \.self) { name in
+#if targetEnvironment(macCatalyst)
+                            TextEditor(text: .constant(name))
+                                .font(.title3)
+                                .frame(height: 30)
+                                .scrollDisabled(true)
+                                .scrollContentBackground(.hidden)
+                                .background(Color.clear)
+#else
+                            Text(name)
+                                .font(.title3)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .textSelection(.enabled)
+#endif
                         }
                     }
                 }
-            }.padding(10)
-            
-            ScrollView {
-                VStack(alignment: .leading) {
-                    ForEach(plantRecord.bestNames, id: \.self) { name in
-                        Text(name)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                    }
-                }
-            }.padding(10)
-        }
+                .padding(10)
+            }
     }
 }

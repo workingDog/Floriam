@@ -31,6 +31,11 @@ extension UIImage {
   
 }
 
+struct ShareImage: Identifiable {
+    let id = UUID()
+    let image: UIImage
+}
+
 @Model
 final class PlantRecord {
     @Attribute(.unique) var plantId: UUID

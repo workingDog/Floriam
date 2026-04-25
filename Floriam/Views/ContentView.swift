@@ -11,8 +11,8 @@ import PhotosUI
 
 
 struct ContentView: View {
-    @Environment(PlantNetManager.self) private var netManager
     @Environment(\.modelContext) private var modelContext
+    @Environment(PlantNetManager.self) private var netManager
     
     @State private var showPhotoPicker = false
     @State private var showCamera = false
@@ -22,6 +22,7 @@ struct ContentView: View {
     
     @State private var selectedImages: [ImageItem] = []
     @State private var photoItems: [PhotosPickerItem] = []
+    @State private var sharedImage: ShareImage?
     
     @State private var processingTask: Task<Void, Never>?
     
@@ -95,6 +96,9 @@ struct ContentView: View {
             .buttonStyle(.borderedProminent)
             .tint(.green.opacity(0.8))
         }
+        .sheet(item: $sharedImage) { item in
+            ShareSheet(items: [item.image])
+        }
         .sheet(isPresented: $showSettings) {
             KeyView()
         }
@@ -102,7 +106,7 @@ struct ContentView: View {
             CameraView(selectedImages: $selectedImages)
         }
         .fullScreenCover(isPresented: $showPrevious) {
-            PrevListView()
+            PrevListView().environment(netManager)
         }
         .photosPicker(isPresented: $showPhotoPicker, selection: $photoItems)
         .task(id: photoItems) {
@@ -130,7 +134,16 @@ struct ContentView: View {
                         Text("No results")
                     } else {
                         ForEach(netManager.displayNames, id: \.self) { name in
+#if targetEnvironment(macCatalyst)
+                            TextEditor(text: .constant(name))
+                                .font(.title3)
+                                .frame(maxWidth: .infinity)
+                                .scrollContentBackground(.hidden)
+                                .background(Color.clear)
+#else
                             Text(name).font(.title3)
+                                .textSelection(.enabled)
+#endif
                         }
                     }
                 }.padding(10)
@@ -150,7 +163,10 @@ struct ContentView: View {
                         .frame(maxHeight: .infinity)
                         .clipShape(RoundedRectangle(cornerRadius: 15))
                         .clipped()
-                }
+                        .onLongPressGesture {
+                            sharedImage = ShareImage(image: imgItem.uimage)
+                        }
+                } 
             }
             .padding(.horizontal)
         }.padding(10)

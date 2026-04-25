@@ -17,6 +17,9 @@ Multiple selections (up to 3) from the **Photos App** can used to identify **one
 
 When using the **Camera**, only the one picture is used to identify the plant.
 
+A long press on a picture will bring the **share** panel.
+
+
 ### References
 
 -   [Pl@ntNet](https://my.plantnet.org/)

@@ -173,11 +173,15 @@ struct ContentView: View {
     }
     
     func doIdentify() {
-        processingTask?.cancel()
-        processingTask = Task {
-            processing = true
-            await identifySelectedImages()
-            processing = false
+        if !selectedImages.isEmpty {
+            processingTask?.cancel()
+            processingTask = Task {
+                processing = true
+                await identifySelectedImages()
+                processing = false
+            }
+        } else {
+            netManager.displayNames = []
         }
     }
     
@@ -201,6 +205,7 @@ struct ContentView: View {
             }
         } catch {
             netManager.displayNames = []
+            selectedImages = []
             print(error)
         }
     }

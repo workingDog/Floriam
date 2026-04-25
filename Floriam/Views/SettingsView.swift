@@ -24,14 +24,16 @@ struct SettingsView: View {
                 HStack {
                     Button("Done") {
                         dismiss()
-                    }.padding(10)
+                    }
+                    .buttonStyle(.bordered)
+                    .padding(5)
                     Spacer()
-                }.padding(10)
+                }.padding(8)
 
                 VStack {
-                    Text("Max history: \(Int(maxHistory))")
-                    Slider(value: $maxHistory, in: 10...50, step: 1.0)
-                        .padding(8)
+                    Text("Number of Photos to Keep").padding(10)
+                    Text("\(Int(maxHistory))")
+                    Slider(value: $maxHistory, in: 10...50, step: 1.0).padding(8)
                 }
                 
                 Divider()

@@ -56,7 +56,6 @@ struct ImageItem: Identifiable, Hashable {
         let resized = uimage.resizedToFitWidth(1280)
         return resized.jpegData(compressionQuality: 0.9)
     }
-
 }
 
 struct PlantNetResponse: Codable, Equatable {

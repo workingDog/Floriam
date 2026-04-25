@@ -22,12 +22,14 @@ struct HistoryListView: View {
             backGradient.ignoresSafeArea()
             
             VStack(alignment: .leading) {
-                Button("Done") {
-                    dismiss()
-                }
-                .buttonStyle(.borderedProminent)
-                .tint(.green.opacity(0.8))
-                .padding(10)
+                HStack {
+                    Button("Done") {
+                        dismiss()
+                    }
+                    .buttonStyle(.bordered)
+                    .padding(5)
+                    Spacer()
+                }.padding(8)
                 
                 List {
                     ForEach(plantlist) { plant in

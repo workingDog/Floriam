@@ -40,19 +40,20 @@ import SwiftData
         do {
             if let netResponse {
                 var paths: [String] = []
-                try imgData.forEach { data in
+
+                for data in imgData {
                     let path = try saveImage(data)
                     paths.append(path)
                 }
+                
                 let bestScore = netResponse.bestResult?.score ?? 0.0
                 let record = PlantRecord(imagePaths: paths, bestNames: displayNames, score: bestScore)
                 context.insert(record)
-                try context.save()
-                
                 try enforceLimit()
+                try context.save()
             }
         } catch {
-            print(error)
+            print("Save failed:", error)
         }
     }
     
@@ -245,6 +246,7 @@ import SwiftData
         let fileURL = baseURL.appendingPathComponent(filename)
         
         try data.write(to: fileURL, options: .atomic)
+        
         return fileURL.path
     }
     

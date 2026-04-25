@@ -87,7 +87,7 @@ struct ListRowView: View {
 #if targetEnvironment(macCatalyst)
                             TextEditor(text: .constant(name))
                                 .font(.title3)
-                                .frame(height: 30)
+                                .frame(height: 35)
                                 .scrollDisabled(true)
                                 .scrollContentBackground(.hidden)
                                 .background(Color.clear)

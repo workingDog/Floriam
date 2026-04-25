@@ -137,7 +137,7 @@ struct ContentView: View {
 #if targetEnvironment(macCatalyst)
                             TextEditor(text: .constant(name))
                                 .font(.title3)
-                                .frame(maxWidth: .infinity, minHeight: 40)
+                                .frame(maxWidth: .infinity, minHeight: 35)
                                 .scrollContentBackground(.hidden)
                                 .background(Color.clear)
 #else

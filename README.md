@@ -9,8 +9,7 @@ A basic app to identify a plant from a picture taken with the camera or from the
 
 ## Usage
 
-First select the **gear icon** and add your **api-key** and save.
-If desired, adjust the maximum number of picture **History** to keep, default 10.
+First, tap the **gear icon**, enter your **API key**, and save. You can also optionally adjust how many images to keep in your **History**, the default is 10.
 
 Multiple photo selections (up to 3) from the **Photos App** can used to identify **one** plant.  
 

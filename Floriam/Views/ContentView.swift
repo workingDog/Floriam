@@ -106,7 +106,7 @@ struct ContentView: View {
             CameraView(selectedImages: $selectedImages)
         }
         .fullScreenCover(isPresented: $showPrevious) {
-            PrevListView().environment(netManager)
+            HistoryListView().environment(netManager)
         }
         .photosPicker(isPresented: $showPhotoPicker, selection: $photoItems)
         .task(id: photoItems) {

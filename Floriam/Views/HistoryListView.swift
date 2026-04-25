@@ -1,5 +1,5 @@
 //
-//  PrevListView.swift
+//  HistoryListView.swift
 //  Floriam
 //
 //  Created by Ringo Wathelet on 2026/04/12.
@@ -8,7 +8,7 @@ import SwiftUI
 import SwiftData
 
 
-struct PrevListView: View {
+struct HistoryListView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(PlantNetManager.self) private var netManager
     @Environment(\.dismiss) var dismiss

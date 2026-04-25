@@ -16,7 +16,7 @@ struct ContentView: View {
     
     @State private var showPhotoPicker = false
     @State private var showCamera = false
-    @State private var showPrevious = false
+    @State private var showHistory = false
     @State private var showSettings = false
     @State private var processing = false
     
@@ -43,7 +43,7 @@ struct ContentView: View {
                     }
                     Spacer()
                     Button {
-                        showPrevious = true
+                        showHistory = true
                     } label: {
                         VStack {
                             Image(systemName: "list.clipboard").font(.title2)
@@ -105,7 +105,7 @@ struct ContentView: View {
         .fullScreenCover(isPresented: $showCamera, onDismiss: doIdentify) {
             CameraView(selectedImages: $selectedImages)
         }
-        .fullScreenCover(isPresented: $showPrevious) {
+        .fullScreenCover(isPresented: $showHistory) {
             HistoryListView().environment(netManager)
         }
         .photosPicker(isPresented: $showPhotoPicker, selection: $photoItems)

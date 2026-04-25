@@ -18,7 +18,7 @@ struct SettingsView: View {
     
     var body: some View {
         ZStack {
-            backGradient.ignoresSafeArea()
+            AppTheme.backGradient.ignoresSafeArea()
             
             VStack (alignment: .leading, spacing: 30) {
                 HStack {

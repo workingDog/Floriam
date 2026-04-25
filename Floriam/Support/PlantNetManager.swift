@@ -250,7 +250,7 @@ import SwiftData
         return fileURL.path
     }
     
-    func getImage(from path: String) -> UIImage? {
+    static func getImage(from path: String) -> UIImage? {
         guard FileManager.default.fileExists(atPath: path) else {
             print("---> file not found at path:", path)
             return nil

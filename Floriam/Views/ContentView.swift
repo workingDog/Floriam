@@ -19,6 +19,7 @@ struct ContentView: View {
     @State private var showHistory = false
     @State private var showSettings = false
     @State private var processing = false
+    @State private var cameraCancel = false
     
     @State private var selectedImages: [ImageItem] = []
     @State private var photoItems: [PhotosPickerItem] = []
@@ -29,7 +30,7 @@ struct ContentView: View {
 
     var body: some View {
         ZStack {
-            backGradient.ignoresSafeArea()
+            AppTheme.backGradient.ignoresSafeArea()
             
             VStack {
                 HStack {
@@ -93,8 +94,8 @@ struct ContentView: View {
                 }
                 Spacer()
             }
-            .buttonStyle(.borderedProminent)
-            .tint(.green.opacity(0.8))
+            .buttonStyle(.glass)
+            .tint(.green)
         }
         .sheet(item: $sharedImage) { item in
             ShareSheet(items: [item.uimage])
@@ -103,10 +104,10 @@ struct ContentView: View {
             SettingsView()
         }
         .fullScreenCover(isPresented: $showCamera, onDismiss: doIdentify) {
-            CameraView(selectedImages: $selectedImages)
+            CameraView(selectedImages: $selectedImages, cameraCancel: $cameraCancel)
         }
         .fullScreenCover(isPresented: $showHistory) {
-            HistoryListView().environment(netManager)
+            HistoryListView()
         }
         .photosPicker(isPresented: $showPhotoPicker, selection: $photoItems)
         .task(id: photoItems) {
@@ -167,21 +168,24 @@ struct ContentView: View {
                             sharedImage = ImageItem(uimage: imgItem.uimage)
                         }
                 } 
-            }
-            .padding(.horizontal)
+            }.padding(.horizontal)
         }.padding(10)
     }
     
     func doIdentify() {
-        if !selectedImages.isEmpty {
-            processingTask?.cancel()
-            processingTask = Task {
-                processing = true
-                await identifySelectedImages()
-                processing = false
-            }
+        if cameraCancel {
+            cameraCancel = false
         } else {
-            netManager.displayNames = []
+            if !selectedImages.isEmpty {
+                processingTask?.cancel()
+                processingTask = Task {
+                    processing = true
+                    await identifySelectedImages()
+                    processing = false
+                }
+            } else {
+                netManager.displayNames = []
+            }
         }
     }
     

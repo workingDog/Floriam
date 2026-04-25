@@ -12,7 +12,9 @@ import PhotosUI
 
 struct CameraView: UIViewControllerRepresentable {
     @Environment(\.dismiss) var dismiss
+    
     @Binding var selectedImages: [ImageItem]
+    @Binding var cameraCancel: Bool
     
     func makeUIViewController(context: Context) -> UIImagePickerController {
         let imagePicker = UIImagePickerController()
@@ -25,31 +27,39 @@ struct CameraView: UIViewControllerRepresentable {
     func updateUIViewController(_ uiViewController: UIImagePickerController, context: Context) { }
     
     func makeCoordinator() -> Coordinator {
-        return Coordinator(picker: self)
+        Coordinator(
+            selectedImages: $selectedImages,
+            cameraCancel: $cameraCancel,
+            dismiss: dismiss
+        )
     }
+
 }
 
-// Coordinator will help to preview the selected image in the View.
 class Coordinator: NSObject, UINavigationControllerDelegate, UIImagePickerControllerDelegate {
-    var picker: CameraView
-    
-    init(picker: CameraView) {
-        self.picker = picker
-    }
-    
-    @objc func done() {
-        picker.dismiss()
+    @Binding var selectedImages: [ImageItem]
+    @Binding var cameraCancel: Bool
+    var dismiss: DismissAction
+
+    init(selectedImages: Binding<[ImageItem]>,
+         cameraCancel: Binding<Bool>,
+         dismiss: DismissAction) {
+        
+        self._selectedImages = selectedImages
+        self._cameraCancel = cameraCancel
+        self.dismiss = dismiss
     }
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        
         guard let selectedImage = info[.originalImage] as? UIImage else { return }
-        self.picker.selectedImages = [ImageItem(uimage: selectedImage)]
-        self.picker.dismiss()
+        self.selectedImages = [ImageItem(uimage: selectedImage)]
+        self.dismiss()
     }
     
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
-        self.picker.selectedImages = []
-        self.picker.dismiss()
+        self.cameraCancel = true
+        self.dismiss()
     }
     
 }

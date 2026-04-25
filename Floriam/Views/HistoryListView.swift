@@ -10,7 +10,6 @@ import SwiftData
 
 struct HistoryListView: View {
     @Environment(\.modelContext) private var modelContext
-    @Environment(PlantNetManager.self) private var netManager
     @Environment(\.dismiss) var dismiss
     
     @Query(sort: \PlantRecord.date, order: .reverse) var plantlist: [PlantRecord]
@@ -19,7 +18,7 @@ struct HistoryListView: View {
     
     var body: some View {
         ZStack(alignment: .topLeading) {
-            backGradient.ignoresSafeArea()
+            AppTheme.backGradient.ignoresSafeArea()
             
             VStack(alignment: .leading) {
                 HStack {
@@ -58,8 +57,6 @@ struct HistoryListView: View {
 }
 
 struct ListRowView: View {
-    @Environment(PlantNetManager.self) private var netManager
-    
     let plantRecord: PlantRecord
     @Binding var sharedImage: ImageItem?
     
@@ -68,7 +65,7 @@ struct ListRowView: View {
                 ScrollView(.horizontal) {
                     HStack {
                         ForEach(plantRecord.imagePaths, id: \.self) { path in
-                            if let uiImage = netManager.getImage(from: path) {
+                            if let uiImage = PlantNetManager.getImage(from: path) {
                                 Image(uiImage: uiImage)
                                     .resizable()
                                     .scaledToFill()

@@ -22,7 +22,7 @@ struct ContentView: View {
     
     @State private var selectedImages: [ImageItem] = []
     @State private var photoItems: [PhotosPickerItem] = []
-    @State private var sharedImage: ShareImage?
+    @State private var sharedImage: ImageItem?
     
     @State private var processingTask: Task<Void, Never>?
     
@@ -97,7 +97,7 @@ struct ContentView: View {
             .tint(.green.opacity(0.8))
         }
         .sheet(item: $sharedImage) { item in
-            ShareSheet(items: [item.image])
+            ShareSheet(items: [item.uimage])
         }
         .sheet(isPresented: $showSettings) {
             KeyView()
@@ -164,7 +164,7 @@ struct ContentView: View {
                         .clipShape(RoundedRectangle(cornerRadius: 15))
                         .clipped()
                         .onLongPressGesture {
-                            sharedImage = ShareImage(image: imgItem.uimage)
+                            sharedImage = ImageItem(uimage: imgItem.uimage)
                         }
                 } 
             }

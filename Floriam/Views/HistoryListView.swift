@@ -15,7 +15,7 @@ struct HistoryListView: View {
     
     @Query(sort: \PlantRecord.date, order: .reverse) var plantlist: [PlantRecord]
     
-    @State private var sharedImage: ShareImage?
+    @State private var sharedImage: ImageItem?
     
     var body: some View {
         ZStack(alignment: .topLeading) {
@@ -41,7 +41,7 @@ struct HistoryListView: View {
             }
         }
         .sheet(item: $sharedImage) { item in
-            ShareSheet(items: [item.image])
+            ShareSheet(items: [item.uimage])
         }
     }
     
@@ -59,7 +59,7 @@ struct ListRowView: View {
     @Environment(PlantNetManager.self) private var netManager
     
     let plantRecord: PlantRecord
-    @Binding var sharedImage: ShareImage?
+    @Binding var sharedImage: ImageItem?
     
     var body: some View {
             VStack {
@@ -74,7 +74,7 @@ struct ListRowView: View {
                                     .clipShape(RoundedRectangle(cornerRadius: 15))
                                     .clipped()
                                     .onLongPressGesture {
-                                        sharedImage = ShareImage(image: uiImage)
+                                        sharedImage = ImageItem(uimage: uiImage)
                                     }
                             }
                         }

@@ -100,7 +100,7 @@ struct ContentView: View {
             ShareSheet(items: [item.uimage])
         }
         .sheet(isPresented: $showSettings) {
-            KeyView()
+            SettingsView()
         }
         .fullScreenCover(isPresented: $showCamera, onDismiss: doIdentify) {
             CameraView(selectedImages: $selectedImages)

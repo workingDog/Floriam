@@ -10,6 +10,18 @@ import SwiftData
 
 
 @Observable class PlantNetManager {
+
+    private let defaultHist = 10.0
+
+    var maxHistory: Double {
+        get {
+            let value = UserDefaults.standard.double(forKey: "maxHistory")
+            return value == 0 ? defaultHist : value
+        }
+        set {
+            UserDefaults.standard.set(newValue, forKey: "maxHistory")
+        }
+    }
     
     @ObservationIgnored var modelContext: ModelContext?
     
@@ -251,15 +263,15 @@ import SwiftData
         return UIImage(contentsOfFile: path)
     }
     
-    // only keep the last 10 PlantRecords
+    // only keep the last maxHistory PlantRecords
     func enforceLimit() throws {
         let descriptor = FetchDescriptor<PlantRecord>(
             sortBy: [SortDescriptor(\.date, order: .reverse)]
         )
         if let modelContext {
             let items = try modelContext.fetch(descriptor)
-            if items.count > 10 {
-                let toDelete = items.suffix(from: 10)
+            if items.count > Int(maxHistory) {
+                let toDelete = items.suffix(from: Int(maxHistory))
                 for item in toDelete {
                     modelContext.delete(item)
                     // also delete image files

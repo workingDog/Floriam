@@ -1,5 +1,5 @@
 //
-//  KeyView.swift
+//  SettingsView.swift
 //  Floriam
 //
 //  Created by Ringo Wathelet on 2026/04/13.
@@ -9,8 +9,10 @@ import Foundation
 import SwiftUI
 
 
-struct KeyView: View {
+struct SettingsView: View {
     @Environment(\.dismiss) var dismiss
+    
+    @AppStorage("maxHistory") private var maxHistory = 10.0
 
     @State private var theKey = ""
     
@@ -18,7 +20,7 @@ struct KeyView: View {
         ZStack {
             backGradient.ignoresSafeArea()
             
-            VStack (alignment: .leading, spacing: 60) {
+            VStack (alignment: .leading, spacing: 30) {
                 HStack {
                     Button("Done") {
                         dismiss()
@@ -26,6 +28,14 @@ struct KeyView: View {
                     Spacer()
                 }.padding(10)
 
+                VStack {
+                    Text("Max history: \(Int(maxHistory))")
+                    Slider(value: $maxHistory, in: 10...50, step: 1.0)
+                        .padding(8)
+                }
+                
+                Divider()
+                
                 HStack {
                     Spacer()
                     VStack (spacing: 20) {
@@ -33,12 +43,12 @@ struct KeyView: View {
                         Text("[Pl@ntNet](https://my.plantnet.org/)")
                     }
                     Spacer()
-                }.padding(.top, 50)
+                }.padding(.top, 20)
                 
                 CustomSecureField(password: $theKey)
                     .foregroundStyle(.blue)
                     .textFieldStyle(CustomTextFieldStyle())
-                    .padding(.top, 50)
+                    .padding(.top, 20)
                     .padding(.horizontal, 8)
                 
                 HStack {

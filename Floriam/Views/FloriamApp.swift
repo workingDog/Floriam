@@ -17,7 +17,7 @@ enum AppTheme {
         colors: [
             Color.green.opacity(0.3),
             Color.blue.opacity(0.2),
-            Color(.systemBackground)
+            Color.red.opacity(0.1)
         ],
         startPoint: .topLeading,
         endPoint: .bottomTrailing

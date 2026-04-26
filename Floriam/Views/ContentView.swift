@@ -61,18 +61,6 @@ struct ContentView: View {
                         }
                     }
                     Spacer()
-                    
-//                    Menu {
-//                        Button("Settings") {
-//                            showSettings = true
-//                        }
-//                    } label: {
-//                        VStack {
-//                            Image(systemName: "ellipsis.circle").font(.title2)
-//                            Text("More").font(.caption)
-//                        }
-//                    }
-                    
                     Button {
                         showSettings = true
                     } label: {

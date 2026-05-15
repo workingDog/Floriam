@@ -10,7 +10,7 @@ import SwiftData
 
 
 @Observable class PlantNetManager {
-
+    
     var maxHistory: Double {
         get { UserDefaults.standard.double(forKey: "maxHistory") }
         set { UserDefaults.standard.set(newValue, forKey: "maxHistory") }
@@ -27,6 +27,8 @@ import SwiftData
     
     var displayNames: [String] = []
     
+    var identifyMode = true
+    
     init() {
         self.apiKey = KeychainInterface.getKey() ?? ""
     }
@@ -40,7 +42,7 @@ import SwiftData
         do {
             if let netResponse {
                 var paths: [String] = []
-
+                
                 for data in imgData {
                     let path = try saveImage(data)
                     paths.append(path)
@@ -72,30 +74,40 @@ import SwiftData
         var uniqueSet = Set<String>()
         
         for result in results {
-            if let name = result.species.scientificName {
-                uniqueSet.insert(name.trimLowercased())
+            if identifyMode {
+                if let species = result.species {
+                    //                    if let name = species.scientificName {
+                    //                        uniqueSet.insert(name.trimLowercased())
+                    //                    }
+                    for name in species.englishNames ?? [] {
+                        uniqueSet.insert(name.trimLowercased())
+                    }
+                    
+                    /*
+                     // does not seem to add value
+                     do {
+                     let response = try await fetchVernacularNamesFrom(gbif: result.gbif.id)
+                     let vnames = response
+                     .filter { ["en", "eng"].contains($0.language?.lowercased()) }
+                     .map(\.vernacularName)
+                     
+                     vnames.forEach { uniqueSet.insert($0.trimLowercased()) }
+                     } catch {
+                     print(error)
+                     }
+                     */
+                    
+                }
+            } else {
+                if let name = result.name {
+                    uniqueSet.insert(name.trimLowercased())
+                }
+                if let desc = result.description {
+                    uniqueSet.insert(desc.trimLowercased())
+                }
             }
-            
-            for name in result.species.englishNames ?? [] {
-                uniqueSet.insert(name.trimLowercased())
-            }
-
-            /*
-             // does not seem to add value
-            do {
-                let response = try await fetchVernacularNamesFrom(gbif: result.gbif.id)
-                let vnames = response
-                    .filter { ["en", "eng"].contains($0.language?.lowercased()) }
-                    .map(\.vernacularName)
-                
-                vnames.forEach { uniqueSet.insert($0.trimLowercased()) }
-            } catch {
-                print(error)
-            }
-            */
-            
-            displayNames = Array(uniqueSet)
         }
+        displayNames = Array(uniqueSet)
     }
     
     func checkStatus() async {
@@ -115,7 +127,10 @@ import SwiftData
     
     func identify(project: String = "all", images: [Data], organs: [String]? = nil) async throws {
         
-        var components = URLComponents(string: "\(baseURL)/identify/\(project)")!
+        var urlString = identifyMode ? "\(baseURL)/identify/\(project)" : "\(baseURL)/diseases/identify"
+ //       print("----> url: \(urlString)")
+        
+        var components = URLComponents(string: urlString)!
         components.queryItems = [
             URLQueryItem(name: "api-key", value: apiKey)
         ]
@@ -150,11 +165,13 @@ import SwiftData
         
         let (data, response) = try await URLSession.shared.data(for: request)
         
-        //    print("---> response: \n \(String(data: data, encoding: .utf8) as AnyObject) \n")
+  //          print("---> response: \n \(String(data: data, encoding: .utf8) as AnyObject) \n")
         
         try validate(response: response, data: data)
         
         self.netResponse = try JSONDecoder().decode(PlantNetResponse.self, from: data)
+        
+  //      print("---> self.netResponse:  \(self.netResponse?.results)")
         
         await uniqueDisplayNames(top: 1)
     }
@@ -336,9 +353,9 @@ enum APIError: Swift.Error, LocalizedError {
     
     var errorDescription: String? {
         switch self {
-        case .unknown: return "Unknown error"
-        case .apiError(let reason), .parserError(let reason): return reason
-        case .networkError(let from): return from.localizedDescription
+            case .unknown: return "Unknown error"
+            case .apiError(let reason), .parserError(let reason): return reason
+            case .networkError(let from): return from.localizedDescription
         }
     }
 }

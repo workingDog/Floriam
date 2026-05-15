@@ -88,8 +88,14 @@ struct Query: Codable, Equatable {
 struct PlantNetResult: Identifiable, Codable, Equatable {
     let id = UUID()
     
+    // for disease only
+    let name: String?
+    let description: String?
+    
     let score: Double
-    let species: Species
+    
+    // for identification only
+    let species: Species?
     
     let gbif: Gbif?
     let powo: Gbif?
@@ -104,7 +110,9 @@ struct Iucn: Codable, Equatable {
     let id, category: String
 }
 
-struct Species: Codable, Equatable {
+struct Species: Identifiable, Codable, Equatable {
+    let id = UUID()
+    
     let scientificNameWithoutAuthor: String?
     let scientificNameAuthorship: String?
     let scientificName: String?

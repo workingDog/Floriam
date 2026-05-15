@@ -10,6 +10,11 @@ import SwiftData
 import PhotosUI
 
 
+enum SearchMode: String, CaseIterable, Hashable {
+    case disease = "disease"
+    case identify = "identify"
+}
+
 struct ContentView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(PlantNetManager.self) private var netManager
@@ -27,63 +32,88 @@ struct ContentView: View {
     
     @State private var processingTask: Task<Void, Never>?
     
-
+    
     var body: some View {
-        ZStack {
-            AppTheme.backGradient.ignoresSafeArea()
-            
-            VStack {
-                HStack {
-                    Button {
-                        showCamera = true
-                    } label: {
-                        VStack {
-                            Image(systemName: "camera").font(.title2)
-                            Text("Camera").font(.caption)
+        NavigationStack {
+            ZStack {
+                AppTheme.backGradient.ignoresSafeArea()
+                
+                VStack(alignment: .leading, spacing: 0) {
+                    HStack {
+                        Button {
+                            showCamera = true
+                        } label: {
+                            VStack {
+                                Image(systemName: "camera").font(.title2)
+                                Text("Camera").font(.caption)
+                            }
+                        }
+                        Spacer()
+                        
+                        Button {
+                            netManager.identifyMode.toggle()
+                        } label: {
+                            VStack {
+                                Image(systemName: netManager.identifyMode ? "sparkle.magnifyingglass" : "leaf").font(.title2)
+                                Text(netManager.identifyMode ? "Identify" : "Disease").font(.caption)
+                            }
+                        }
+                        
+                        Spacer()
+                        Button {
+                            showPhotoPicker = true
+                        } label: {
+                            VStack {
+                                Image(systemName: "photo.on.rectangle").font(.title2)
+                                Text("Photos").font(.caption)
+                            }
                         }
                     }
-                    Spacer()
-                    Button {
-                        showHistory = true
-                    } label: {
-                        VStack {
-                            Image(systemName: "list.clipboard").font(.title2)
-                            Text("History").font(.caption)
+                    .buttonStyle(.glass)
+                    .disabled(processing)
+                    .padding(.horizontal)
+                    .padding(.vertical, 15)
+                    .background(.ultraThinMaterial)
+                    
+                    Divider()
+                    
+                    GeometryReader { geo in
+                        VStack(alignment: .leading, spacing: 0) {
+                            horizontalImagesView
+                                .frame(height: geo.size.height * 2.0 / 3.0)
+                            Divider()
+                            NavigationLink {
+                                DetailsView()
+                            } label: {
+                                verticalResultsView
+                                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                            }
                         }
                     }
+                    
                     Spacer()
-                    Button {
-                        showPhotoPicker = true
-                    } label: {
-                        VStack {
-                            Image(systemName: "photo.on.rectangle").font(.title2)
-                            Text("Photos").font(.caption)
-                        }
-                    }
-                    Spacer()
-                    Button {
-                        showSettings = true
-                    } label: {
-                        Image(systemName: "gear").font(.title2)
-                    }.tint(.gray)
                 }
-                .disabled(processing)
-                .padding(.horizontal)
-                .padding(.top, 10)
-                .padding(.bottom, 10)
-                .background(.ultraThinMaterial)
-                Divider()
-                GeometryReader { geo in
-                    VStack(alignment: .leading, spacing: 0) {
-                        horizontalImagesView.frame(height: geo.size.height * 2.0 / 3.0)
-                        Divider()
-                        verticalResultsView.frame(height: geo.size.height / 3)
-                    }
-                }
-                Spacer()
+                
+                .tint(.green)
             }
-            .buttonStyle(.glass)
-            .tint(.green)
+            .toolbar {
+                ToolbarItem(placement: .automatic) {
+                    HStack {
+                        Button {
+                            showHistory = true
+                        } label: {
+                            Image(systemName: "list.clipboard").font(.title)
+                        }
+                        Button {
+                            showSettings = true
+                        } label: {
+                            Image(systemName: "gear").font(.title)
+                        }
+                    }
+                }
+            }
+            .buttonStyle(.bordered)
+            .disabled(processing)
         }
         .sheet(item: $sharedImage) { item in
             ShareSheet(items: [item.uimage])
@@ -118,25 +148,30 @@ struct ContentView: View {
                 .frame(maxWidth: .infinity, alignment: .center)
         } else {
             ScrollView(.vertical) {
-                VStack {
+                VStack(alignment: .leading) {
+                    Text(netManager.identifyMode ? "Plant" : "Disease").foregroundStyle(Color.secondary).padding(10)
+
                     if netManager.displayNames.isEmpty {
                         Text("No results")
                     } else {
                         ForEach(netManager.displayNames, id: \.self) { name in
-#if targetEnvironment(macCatalyst)
-                            TextEditor(text: .constant(name))
-                                .font(.title3)
-                                .frame(maxWidth: .infinity, minHeight: 35)
-                                .scrollContentBackground(.hidden)
-                                .background(Color.clear)
-#else
-                            Text(name).font(.title3)
-                                .textSelection(.enabled)
-#endif
+                            Text("-  \(name)").font(.title3).textSelection(.enabled)
+                            
+//#if targetEnvironment(macCatalyst)
+//                            TextEditor(text: .constant("-  \(name)"))
+//                                .font(.title3)
+//                                .frame(maxWidth: .infinity, minHeight: 35)
+//                                .scrollContentBackground(.hidden)
+//                                .background(Color.clear)
+//#else
+//                            Text("-  \(name)").font(.title3)
+//                                .textSelection(.enabled)
+//#endif
                         }
                     }
-                }.padding(10)
+                }.padding(5)
             }
+           // .border(.red)
         }
     }
     

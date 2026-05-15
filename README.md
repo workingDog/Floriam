@@ -19,6 +19,7 @@ Toggle the **Identify/Disease** to identify the plant or the disease from the pi
 
 A long press on a picture will bring the **Share** panel.
 
+Tap on the results to get more information.
 
 ### References
 

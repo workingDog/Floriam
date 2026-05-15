@@ -4,7 +4,6 @@
 //
 //  Created by Ringo Wathelet on 2026/05/15.
 //
-
 import Foundation
 import SwiftUI
 
@@ -24,7 +23,6 @@ struct DetailsView: View {
                         Text("No results")
                     } else {
                         if netManager.identifyMode {
-                            Text("Scientific names").font(.title).padding(10)
                             ForEach(results) { result in
                                 if let species = result.species {
                                     if let name = species.scientificName {
@@ -35,17 +33,20 @@ struct DetailsView: View {
                                     }
                                 }
                             }
+                            .navigationTitle("Scientific names")
                         } else {
-                            Text("Possible diseases").font(.title).padding(10)
                             ForEach(results) { plant in
-                                VStack {
-                                    Text(plant.name ?? "no name").font(.title3)
-                                    Text(plant.description ?? "no info").font(.title3)
-                                    Divider()
+                                NavigationLink {
+                                    DiseaseView(name: plant.name, description: plant.description)
+                                } label: {
+                                    VStack {
+                                        Text(plant.name ?? "no name").font(.title3)
+                                        Text(plant.description ?? "no info").font(.title3)
+                                    }
                                 }
-                                .textSelection(.enabled)
-                                .padding(.horizontal, 10)
+                                Divider()
                             }
+                            .navigationTitle("Possible diseases")
                         }
                     }
                 }

@@ -93,7 +93,6 @@ struct ContentView: View {
                     
                     Spacer()
                 }
-                
                 .tint(.green)
             }
             .toolbar {
@@ -155,23 +154,14 @@ struct ContentView: View {
                         Text("No results")
                     } else {
                         ForEach(netManager.displayNames, id: \.self) { name in
-                            Text("-  \(name)").font(.title3).textSelection(.enabled)
-                            
-//#if targetEnvironment(macCatalyst)
-//                            TextEditor(text: .constant("-  \(name)"))
-//                                .font(.title3)
-//                                .frame(maxWidth: .infinity, minHeight: 35)
-//                                .scrollContentBackground(.hidden)
-//                                .background(Color.clear)
-//#else
-//                            Text("-  \(name)").font(.title3)
-//                                .textSelection(.enabled)
-//#endif
+                            Text("-  \(name)")
+                                .font(.title3)
+                                .textSelection(.enabled)
+                                .foregroundStyle(.black)
                         }
                     }
                 }.padding(5)
             }
-           // .border(.red)
         }
     }
     

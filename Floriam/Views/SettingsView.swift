@@ -10,6 +10,7 @@ import SwiftUI
 
 
 struct SettingsView: View {
+    @Environment(AiManager.self) private var aiManager
     @Environment(\.dismiss) var dismiss
     
     @AppStorage("maxHistory") private var maxHistory = 10.0
@@ -65,7 +66,7 @@ struct SettingsView: View {
                 Spacer()
             }
             .sheet(isPresented: $showAIKey) {
-                AIKeyView()
+                AIKeyView().environment(aiManager)
             }
             .sheet(isPresented: $showPlantKey) {
                 PlantKeyView()

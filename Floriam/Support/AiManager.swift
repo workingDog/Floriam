@@ -27,6 +27,7 @@ import GeminiKitAPI
 
     init() {
         let apikey = KeychainInterface.getPassword(account: aiAccount) ?? ""
+  //      print("\n----> apikey: \(apikey) \n")
         if apikey.isEmpty {
             self.aiAvailable = false
             print("\n----> No AI api key found \n")

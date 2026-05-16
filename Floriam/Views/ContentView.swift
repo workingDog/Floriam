@@ -18,6 +18,7 @@ enum SearchMode: String, CaseIterable, Hashable {
 struct ContentView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(PlantNetManager.self) private var netManager
+    @Environment(AiManager.self) private var aiManager
     
     @State private var showPhotoPicker = false
     @State private var showCamera = false
@@ -118,7 +119,7 @@ struct ContentView: View {
             ShareSheet(items: [item.uimage])
         }
         .sheet(isPresented: $showSettings) {
-            SettingsView()
+            SettingsView().environment(aiManager)
         }
         .fullScreenCover(isPresented: $showCamera, onDismiss: doIdentify) {
             CameraView(selectedImages: $selectedImages, cameraCancel: $cameraCancel)

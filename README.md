@@ -1,6 +1,6 @@
 #  Floriam
 
-A simple iOS app to identify a plant or plant didease from a picture taken with the camera or from the Photos App. The app uses [Pl@ntNet API](https://my.plantnet.org/doc/api/openapi) to identify the plant or the plant disease in the picture "...The identification engine is based on most advanced deep learning technologies ..."
+A simple iOS app to identify a plant or plant disease from a picture taken with the camera or from the Photos App. The app uses [Pl@ntNet API](https://my.plantnet.org/doc/api/openapi) to identify the plant or the plant disease in the picture, "...The identification engine is based on most advanced deep learning technologies ..."
 
 <p float="left">
   <img src="picture2.png" width="333"  height="444" />

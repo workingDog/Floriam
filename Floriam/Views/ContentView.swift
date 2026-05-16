@@ -220,6 +220,17 @@ struct ContentView: View {
             try await netManager.identify(project: "all", images: imgArr, organs: nil)
             if let response = netManager.netResponse, !response.results.isEmpty {
                 await netManager.saveResult(imgArr)
+                
+                let skill = netManager.identifyMode ? aiManager.PlantInfoSkill : aiManager.PlantDiseaseSkill
+
+                if let bestName = netManager.displayNames.first {
+                    if aiManager.aiAvailable {
+                        aiManager.currentSkill = skill
+                        await aiManager.getResponse(from: bestName)
+                        await netManager.updateInfo(newInfo: aiManager.aiReply)
+                    }
+                }
+                
             }
         } catch {
             netManager.displayNames = []

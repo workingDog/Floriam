@@ -34,12 +34,14 @@ extension UIImage {
 @Model
 final class PlantRecord {
     @Attribute(.unique) var plantId: UUID
+    var info: String
     var date: Date
     var imagePaths: [String]
     var bestNames: [String]
     var score: Double
 
-    init(imagePaths: [String], bestNames: [String], score: Double) {
+    init(info: String, imagePaths: [String], bestNames: [String], score: Double) {
+        self.info = info
         self.plantId = UUID()
         self.date = Date()
         self.imagePaths = imagePaths

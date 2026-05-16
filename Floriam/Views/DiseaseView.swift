@@ -10,6 +10,7 @@ import GeminiKitAPI
 
 
 struct DiseaseView: View {
+    @Environment(PlantNetManager.self) private var netManager
     @Environment(AiManager.self) private var aiManager
     
     let name: String?
@@ -43,10 +44,12 @@ struct DiseaseView: View {
             }
         }
         .task(id: name) {
+            aiManager.aiReply = ""
             if aiManager.aiAvailable {
                 isLoading = true
                 aiManager.currentSkill = aiManager.PlantDiseaseSkill
-                await aiManager.getResponse(from: description ?? "no info")
+                await aiManager.getResponse(from: name ?? "no info")
+                await netManager.updateInfo(newInfo: aiManager.aiReply)
                 isLoading = false
             }
         }

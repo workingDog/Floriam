@@ -22,6 +22,7 @@ import SwiftData
     let baseURL = "https://my-api.plantnet.org/v2"
     
     var netResponse: PlantNetResponse?
+    var plantId: UUID?
     
     var displayNames: [String] = []
     
@@ -47,7 +48,8 @@ import SwiftData
                 }
                 
                 let bestScore = netResponse.bestResult?.score ?? 0.0
-                let record = PlantRecord(imagePaths: paths, bestNames: displayNames, score: bestScore)
+                let record = PlantRecord(info: "", imagePaths: paths, bestNames: displayNames, score: bestScore)
+                plantId = record.plantId
                 context.insert(record)
                 try enforceLimit()
                 try context.save()
@@ -57,6 +59,23 @@ import SwiftData
         }
     }
     
+    func updateInfo(newInfo: String) async {
+        if plantId != nil {
+            guard let context = modelContext else { return }
+            let descriptor = FetchDescriptor<PlantRecord>(
+                predicate: #Predicate { $0.plantId == plantId! }
+            )
+            do {
+                if let record = try context.fetch(descriptor).first {
+                    record.info = newInfo
+                    try context.save()
+                }
+            } catch {
+                print("Update failed:", error)
+            }
+        }
+    }
+
     private func topResults(top: Int) -> [PlantNetResult] {
         guard let netResponse else { return [] }
         return netResponse.results

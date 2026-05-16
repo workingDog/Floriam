@@ -43,84 +43,114 @@ import GeminiKitAPI
         client = GeminiKit(apiKey: apikey)
     }
     
-    func getResponse(from text: String) async {
+    func getResponse(from text: String, mode: String) async {
         errorDetected = false
-        await getChats(from: text)
+        await getChats(from: text, mode: mode)
         haveResponse.toggle()
     }
 
-    func getChats(from text: String) async {
-        do {
-            let history: [Content] = []
+    func getChats(from text: String, mode: String) async {
+        
+        let chatText = """
+        Explain these \(mode) names in simple English.
 
+        Use short Markdown sections.
+
+        Input:
+        \(text)
+        """
+        
+        do {
             let chat = client.startChat(
                 model: model,
                 systemInstruction: currentSkill,
-                history: history)
+                history: [])
             
-            aiReply = try await chat.sendMessage(text)
+            aiReply = try await chat.sendMessage(chatText)
         } catch {
             errorDetected = true
-            print("----> AI Gemini error: \(error) with \(text)")
+            print("----> AI Gemini error: \(error) with \(chatText)\n")
         }
     }
     
     let PlantDiseaseSkill = """
     ---
     name: plant_disease_info
-    description: A base template for explaining a plant disease.
-    version: 1.0.0
+    description: Explain plant diseases clearly for gardeners and beginners.
+    version: 1.1.0
     ---
 
     # Plant Disease Skill
 
-    ## When to Use
-    Use this skill as a baseline template when explaining a plant disease.
+    ## Purpose
+    Explain plant diseases in clear, beginner-friendly language for gardeners.
 
     ## Instructions
-    1. **Analyze Input**: Identify the specific plant disease of the user request.
-    2. **Explaining Scope**: Explain in plain English the disease impact and reasons.
-    3. **Recomendations**: Propose remedial actions, treatments and preventions.
-    4. **Refine Output**: Ensure the response targets a gardener.
+    1. Identify the disease, pathogen, or pest.
+    2. Explain:
+       - what it is
+       - affected plants
+       - symptoms and visible signs
+       - how it spreads or develops
+    3. Provide practical gardening guidance:
+       - prevention methods
+       - treatment or management options
+       - ways to reduce future outbreaks
+    4. Clearly state uncertainty when information is incomplete.
 
     ## Output Rules
-    - Provide clear, structured responses using Markdown.
-    - Use headers to organize information.
-    - Use bullet points for lists.
+    - Use Markdown formatting.
+    - Use short sections with headers.
+    - Use bullet points where appropriate.
+    - Keep explanations concise and practical.
+    - Write for non-expert gardeners.
 
     ## Constraints
-    - Do not make up facts or data that cannot be verified from the context.
-    - Do not perform actions apart from giving advice.
-    - Maintain a professional and helpful tone.
+    - Do not invent facts.
+    - Do not provide unsafe chemical advice.
+    - Do not hide uncertainty.
+    - Stay focused on explanation and gardening guidance.
     """
     
     let PlantInfoSkill = """
     ---
     name: plant_info
-    description: A base template for explaining a plant.
-    version: 1.0.0
+    description: Explain plants clearly for gardeners and beginners.
+    version: 1.1.0
     ---
 
     # Plant Information Skill
 
-    ## When to Use
-    Use this skill as a baseline template when explaining a plant.
+    ## Purpose
+    Explain plants in clear, beginner-friendly language for gardeners.
 
     ## Instructions
-    1. **Analyze Input**: Identify the specific plant of the user request.
-    2. **Explaining Scope**: Explain in plain English the plant charateristics.
-    3. **Recomendations**: Propose any relevant gardening information.
-    4. **Refine Output**: Ensure the response targets a gardener.
+    1. Identify the plant species or common name.
+    2. Explain:
+       - what the plant is
+       - its notable characteristics
+       - growth habits and appearance
+       - typical environment or climate
+    3. Provide practical gardening information:
+       - watering
+       - sunlight needs
+       - soil preferences
+       - maintenance tips
+    4. Mention common problems or risks if relevant.
+    5. Clearly state uncertainty when information is incomplete.
 
     ## Output Rules
-    - Provide clear, structured responses using Markdown.
-    - Use headers to organize information.
-    - Use bullet points for lists.
+    - Use Markdown formatting.
+    - Use short sections with headers.
+    - Use bullet points where appropriate.
+    - Keep explanations concise and practical.
+    - Write for non-expert gardeners.
 
     ## Constraints
-    - Do not make up facts or data that cannot be verified from the context.
-    - Do not perform actions apart from giving advice.
-    - Maintain a professional and helpful tone.
+    - Do not invent facts.
+    - Do not provide dangerous gardening advice.
+    - Do not hide uncertainty.
+    - Stay focused on explanation and gardening guidance.
     """
     
 }

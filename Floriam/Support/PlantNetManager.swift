@@ -102,9 +102,9 @@ import SwiftData
                     }
                 }
             } else {
-                if let name = result.name {
-                    uniqueSet.insert(name.trimLowercased())
-                }
+//                if let name = result.name {
+//                    uniqueSet.insert(name.trimLowercased())
+//                }
                 if let desc = result.description {
                     uniqueSet.insert(desc.trimLowercased())
                 }

@@ -39,12 +39,9 @@ struct DetailsView: View {
                         } else {
                             ForEach(results) { plant in
                                 NavigationLink {
-                                    DiseaseView(name: plant.name, description: plant.description)
+                                    DiseaseView(description: plant.description)
                                 } label: {
-                                    VStack {
-                                        Text(plant.name ?? "no name").font(.title3)
-                                        Text(plant.description ?? "no info").font(.title3)
-                                    }
+                                    Text(plant.description ?? "no info").font(.title3)
                                 }
                                 Divider()
                             }

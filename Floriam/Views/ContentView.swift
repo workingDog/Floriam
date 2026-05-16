@@ -137,6 +137,10 @@ struct ContentView: View {
         .task(id: modelContext) {
             netManager.setContext(modelContext)
         }
+        .onChange(of: netManager.identifyMode) {
+            selectedImages = []
+            netManager.displayNames = []
+        }
     }
     
     @ViewBuilder
@@ -222,15 +226,19 @@ struct ContentView: View {
                 await netManager.saveResult(imgArr)
                 
                 let skill = netManager.identifyMode ? aiManager.PlantInfoSkill : aiManager.PlantDiseaseSkill
- 
-                if let bestName = netManager.displayNames.first {
-                    if aiManager.aiAvailable {
-                        aiManager.currentSkill = skill
-                        await aiManager.getResponse(from: bestName)
-                        await netManager.updateInfo(newInfo: aiManager.aiReply)
-                    }
-                }
                 
+                let mode = netManager.identifyMode ? "plant" : "disease"
+ 
+                let tempNames = netManager.displayNames.map {
+                    $0.replacingOccurrences(of: ",", with: "")
+                }
+                let bestNamesString = tempNames.joined(separator: " , ")
+                
+                if aiManager.aiAvailable {
+                    aiManager.currentSkill = skill
+                    await aiManager.getResponse(from: bestNamesString, mode: mode)
+                    await netManager.updateInfo(newInfo: aiManager.aiReply)
+                }
             }
         } catch {
             netManager.displayNames = []

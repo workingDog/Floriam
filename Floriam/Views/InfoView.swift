@@ -43,13 +43,13 @@ struct InfoView: View {
                 Spacer()
             }
         }
-        .task(id: name) {
+        .task(id: description) {
             aiManager.aiReply = ""
             if aiManager.aiAvailable {
                 isLoading = true
                 aiManager.currentSkill = aiManager.PlantInfoSkill
-                await aiManager.getResponse(from: name ?? "no info")
-                await netManager.updateInfo(newInfo: aiManager.aiReply)
+                await aiManager.getResponse(from: description ?? "no info", mode: "plant")
+      //          await netManager.updateInfo(newInfo: aiManager.aiReply)
                 isLoading = false
             }
         }

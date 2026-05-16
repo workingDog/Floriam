@@ -61,7 +61,7 @@ import GeminiKitAPI
             aiReply = try await chat.sendMessage(text)
         } catch {
             errorDetected = true
-            print("----> error: \(error)")
+            print("----> AI Gemini error: \(error) with \(text)")
         }
     }
     

@@ -222,7 +222,7 @@ struct ContentView: View {
                 await netManager.saveResult(imgArr)
                 
                 let skill = netManager.identifyMode ? aiManager.PlantInfoSkill : aiManager.PlantDiseaseSkill
-
+ 
                 if let bestName = netManager.displayNames.first {
                     if aiManager.aiAvailable {
                         aiManager.currentSkill = skill

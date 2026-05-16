@@ -88,32 +88,18 @@ import SwiftData
         displayNames = []
         
         let results = topResults(top: top)
+ 
         var uniqueSet = Set<String>()
         
         for result in results {
             if identifyMode {
                 if let species = result.species {
-                    //                    if let name = species.scientificName {
-                    //                        uniqueSet.insert(name.trimLowercased())
-                    //                    }
+                    if let name = species.scientificName {
+                        uniqueSet.insert(name.trimLowercased())
+                    }
                     for name in species.englishNames ?? [] {
                         uniqueSet.insert(name.trimLowercased())
                     }
-                    
-                    /*
-                     // does not seem to add value
-                     do {
-                     let response = try await fetchVernacularNamesFrom(gbif: result.gbif.id)
-                     let vnames = response
-                     .filter { ["en", "eng"].contains($0.language?.lowercased()) }
-                     .map(\.vernacularName)
-                     
-                     vnames.forEach { uniqueSet.insert($0.trimLowercased()) }
-                     } catch {
-                     print(error)
-                     }
-                     */
-                    
                 }
             } else {
                 if let name = result.name {
@@ -124,7 +110,8 @@ import SwiftData
                 }
             }
         }
-        displayNames = Array(uniqueSet)
+        // long names first
+        displayNames = Array(uniqueSet).sorted(by: { $0.count > $1.count})
     }
     
     func checkStatus() async {

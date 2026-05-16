@@ -36,7 +36,7 @@ import GeminiKitAPI
         }
         self.client = GeminiKit(apiKey: apikey)
         self.model = GeminiModel("gemini-3-flash-preview")
-        self.currentSkill = PlantDiseaseSkill
+        self.currentSkill = PlantInfoSkill
     }
     
     func updateClientKey(_ apikey: String) {
@@ -81,6 +81,35 @@ import GeminiKitAPI
     1. **Analyze Input**: Identify the specific plant disease of the user request.
     2. **Explaining Scope**: Explain in plain English the disease impact and reasons.
     3. **Recomendations**: Propose remedial actions, treatments and preventions.
+    4. **Refine Output**: Ensure the response targets a gardener.
+
+    ## Output Rules
+    - Provide clear, structured responses using Markdown.
+    - Use headers to organize information.
+    - Use bullet points for lists.
+
+    ## Constraints
+    - Do not make up facts or data that cannot be verified from the context.
+    - Do not perform actions apart from giving advice.
+    - Maintain a professional and helpful tone.
+    """
+    
+    let PlantInfoSkill = """
+    ---
+    name: plant_info
+    description: A base template for explaining a plant.
+    version: 1.0.0
+    ---
+
+    # Plant Information Skill
+
+    ## When to Use
+    Use this skill as a baseline template when explaining a plant.
+
+    ## Instructions
+    1. **Analyze Input**: Identify the specific plant of the user request.
+    2. **Explaining Scope**: Explain in plain English the plant charateristics.
+    3. **Recomendations**: Propose any relevant gardening information.
     4. **Refine Output**: Ensure the response targets a gardener.
 
     ## Output Rules

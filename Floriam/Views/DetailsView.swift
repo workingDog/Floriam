@@ -26,12 +26,14 @@ struct DetailsView: View {
                             ForEach(results) { result in
                                 if let species = result.species {
                                     if let name = species.scientificName {
-                                        Text(name)
-                                            .font(.title3)
-                                            .textSelection(.enabled)
-                                            .padding(.horizontal, 10)
+                                        NavigationLink {
+                                            InfoView(name: name, description: species.englishNames?.first)
+                                        } label: {
+                                            Text(name).font(.title3)
+                                        }
                                     }
                                 }
+                                Divider()
                             }
                             .navigationTitle("Scientific names")
                         } else {
@@ -50,10 +52,10 @@ struct DetailsView: View {
                         }
                     }
                 }
-                .padding(10)
+                .padding(20)
                 .frame(maxWidth: .infinity, alignment: .topLeading)
             }
-            .padding(10)
+            .padding(20)
             .frame(maxWidth: .infinity, alignment: .topLeading)
         }
         .task {

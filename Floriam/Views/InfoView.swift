@@ -1,15 +1,15 @@
 //
-//  DiseaseView.swift
+//  InfoView.swift
 //  Floriam
 //
-//  Created by Ringo Wathelet on 2026/05/15.
+//  Created by Ringo Wathelet on 2026/05/16.
 //
 import Foundation
 import SwiftUI
 import GeminiKitAPI
 
 
-struct DiseaseView: View {
+struct InfoView: View {
     @Environment(AiManager.self) private var aiManager
     
     let name: String?
@@ -45,7 +45,7 @@ struct DiseaseView: View {
         .task(id: name) {
             if aiManager.aiAvailable {
                 isLoading = true
-                aiManager.currentSkill = aiManager.PlantDiseaseSkill
+                aiManager.currentSkill = aiManager.PlantInfoSkill
                 await aiManager.getResponse(from: description ?? "no info")
                 isLoading = false
             }
@@ -53,3 +53,4 @@ struct DiseaseView: View {
     }
 
 }
+

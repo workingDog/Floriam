@@ -37,7 +37,7 @@ Tap on the results to get more information.
 
 -   A valid **PlantNet API key** is required. Create an account at [Pl@ntNet](https://my.plantnet.org/) to obtain one. A free account can be used.
 
--   A **Google Gemini key** can also be used if desired, see [Google AI key](https://ai.google.dev/gemini-api/docs/api-key). When available, the AI is used to provide more information about identified plant and diseases.
+-   A **Google Gemini key** can also be used if desired, see [Google AI key](https://ai.google.dev/gemini-api/docs/api-key). When available, the AI is used to provide more information about the identified plants and diseases.
 
 
 #### Dependencies

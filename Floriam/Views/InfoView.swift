@@ -49,7 +49,6 @@ struct InfoView: View {
                 isLoading = true
                 aiManager.currentSkill = aiManager.PlantInfoSkill
                 await aiManager.getResponse(from: description ?? "no info", mode: "plant")
-      //          await netManager.updateInfo(newInfo: aiManager.aiReply)
                 isLoading = false
             }
         }

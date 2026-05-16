@@ -140,6 +140,8 @@ struct ContentView: View {
         .onChange(of: netManager.identifyMode) {
             selectedImages = []
             netManager.displayNames = []
+            netManager.netResponse = nil
+            netManager.plantId = nil
         }
     }
     

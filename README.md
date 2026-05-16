@@ -32,17 +32,13 @@ Tap on the results to get more information.
 
 -   [Pl@ntNet API](https://my.plantnet.org/doc/api/openapi)
 
-See also
-
--   [Global Biodiversity Information Facility](https://www.gbif.org/)
-
--   [GBIF API Reference](https://techdocs.gbif.org/en/openapi/)
 
 ### Requirements
 
 -   A valid **PlantNet API key** is required. Create an account at [Pl@ntNet](https://my.plantnet.org/) to obtain one. A free account can be used.
 
--   A **Google Gemini key** can also be used if desired, see [Google AI key](https://ai.google.dev/gemini-api/docs/api-key). When available, the AI is used to provide more information about any identified plant disease.
+-   A **Google Gemini key** can also be used if desired, see [Google AI key](https://ai.google.dev/gemini-api/docs/api-key). When available, the AI is used to provide more information about identified plant diseases.
+
 
 #### Dependencies
 

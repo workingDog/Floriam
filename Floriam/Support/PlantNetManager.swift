@@ -21,8 +21,6 @@ import SwiftData
     let apiKey: String
     let baseURL = "https://my-api.plantnet.org/v2"
     
-    let baseGBIF = "https://api.gbif.org/v1/species"
-    
     var netResponse: PlantNetResponse?
     
     var displayNames: [String] = []
@@ -295,56 +293,6 @@ import SwiftData
         }
     }
     
-    func fetchGBIFID(scientificName: String) async throws -> Int? {
-        if let encoded = scientificName.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed),
-           let url = URL(string: "\(baseGBIF)/match?name=\(encoded)") {
-            
-            let (data, _) = try await URLSession.shared.data(from: url)
-            let decoded = try JSONDecoder().decode(GBIFMatchResponse.self, from: data)
-            
-            return decoded.usageKey
-        } else {
-            return nil
-        }
-    }
-    
-    func fetchVernacularNames(scientificName: String) async throws -> [GBIFVernacularName] {
-        if let gbifID = try await fetchGBIFID(scientificName: scientificName),
-           let url = URL(string: "\(baseGBIF)/\(gbifID)/vernacularNames") {
-            
-            let (data, response) = try await URLSession.shared.data(from: url)
-            
-            guard let http = response as? HTTPURLResponse,
-                  (200...299).contains(http.statusCode) else {
-                throw URLError(.badServerResponse)
-            }
-            
-            let decoded = try JSONDecoder().decode(GBIFVernacularResponse.self, from: data)
-            return decoded.results
-        } else {
-            return []
-        }
-    }
-    
-    func fetchVernacularNamesFrom(gbif: String) async throws -> [GBIFVernacularName] {
-        if let url = URL(string: "\(baseGBIF)/\(gbif)/vernacularNames") {
-            
-            let (data, response) = try await URLSession.shared.data(from: url)
-            
-             print("---> response: \n \(String(data: data, encoding: .utf8) as AnyObject) \n")
-            
-            guard let http = response as? HTTPURLResponse,
-                  (200...299).contains(http.statusCode) else {
-                throw URLError(.badServerResponse)
-            }
-            
-            let decoded = try JSONDecoder().decode(GBIFVernacularResponse.self, from: data)
-            return decoded.results
-        } else {
-            return []
-        }
-    }
-
 }
 
 enum APIError: Swift.Error, LocalizedError {

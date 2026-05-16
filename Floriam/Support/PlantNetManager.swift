@@ -31,9 +31,15 @@ import SwiftData
     init() {
         self.apiKey = KeychainInterface.getKey() ?? ""
     }
-    
+
     func setContext(_ modelContext: ModelContext) {
         self.modelContext = modelContext
+    }
+    
+    func resetResults() {
+        displayNames.removeAll()
+        netResponse = nil
+        plantId = nil
     }
     
     func saveResult(_ imgData: [Data]) async {

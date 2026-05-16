@@ -164,26 +164,3 @@ struct SurveyResults: Codable {
     let uncovered: Double
 }
 
-// --- for GBIF API
-
-struct GBIFMatchResponse: Decodable {
-    let usageKey: Int?
-    let scientificName: String?
-    let matchType: String?
-}
-
-struct GBIFVernacularName: Decodable {
-    let vernacularName: String
-    let language: String?
-}
-
-struct GBIFVernacularResponse: Decodable {
-    let results: [GBIFVernacularName]
-
-    var bestCommonName: String? {
-        if let english = results.first(where: { $0.language == "eng" }) {
-            return english.vernacularName
-        }
-        return results.first?.vernacularName
-    }
-}

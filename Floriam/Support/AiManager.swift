@@ -23,7 +23,7 @@ import GeminiKitAPI
     @ObservationIgnored var client = GeminiKit(apiKey: "your-api-key")
 
     var config: GenerationConfig = GenerationConfig(maxOutputTokens: 1000)
-    var model: GeminiModel = GeminiModel("gemini25Flash")
+    var model: GeminiModel = GeminiModel("gemini-2.5-flash")
 
     init() {
         let apikey = KeychainInterface.getPassword(account: aiAccount) ?? ""
@@ -35,7 +35,7 @@ import GeminiKitAPI
             self.aiAvailable = true
         }
         self.client = GeminiKit(apiKey: apikey)
-        self.model = GeminiModel("gemini-3-flash-preview")
+        self.model = GeminiModel("gemini-2.5-flash")  // "gemini-3-flash-preview"
         self.currentSkill = PlantInfoSkill
     }
     
@@ -50,26 +50,21 @@ import GeminiKitAPI
     }
 
     func getChats(from text: String, mode: String) async {
-        
         let chatText = """
-        Explain these \(mode) names in simple English.
+        Provide practical information about this \(mode) in simple English.
 
         Use short Markdown sections.
 
         Input:
         \(text)
         """
-        
+  
         do {
-            let chat = client.startChat(
-                model: model,
-                systemInstruction: currentSkill,
-                history: [])
-            
+            let chat = client.startChat(model: model, systemInstruction: currentSkill)
             aiReply = try await chat.sendMessage(chatText)
         } catch {
             errorDetected = true
-            print("----> AI Gemini error: \(error) with \(chatText)\n")
+            print("----> AI Gemini error: \(error) with \n \(chatText) \n \(currentSkill.prefix(20))  \n")
         }
     }
     

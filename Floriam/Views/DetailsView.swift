@@ -41,7 +41,9 @@ struct DetailsView: View {
                                 NavigationLink {
                                     DiseaseView(description: plant.description)
                                 } label: {
-                                    Text(plant.description ?? "no info").font(.title3)
+                                    Text(plant.description ?? "no info")
+                                        .font(.title3)
+                                        .padding(10)
                                 }
                                 Divider()
                             }

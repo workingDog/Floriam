@@ -139,9 +139,7 @@ struct ContentView: View {
         }
         .onChange(of: netManager.identifyMode) {
             selectedImages = []
-            netManager.displayNames = []
-            netManager.netResponse = nil
-            netManager.plantId = nil
+            netManager.resetResults()
         }
     }
     
@@ -227,18 +225,21 @@ struct ContentView: View {
             if let response = netManager.netResponse, !response.results.isEmpty {
                 await netManager.saveResult(imgArr)
                 
-                let skill = netManager.identifyMode ? aiManager.PlantInfoSkill : aiManager.PlantDiseaseSkill
-                
-                let mode = netManager.identifyMode ? "plant" : "disease"
- 
-                let tempNames = netManager.displayNames.map {
-                    $0.replacingOccurrences(of: ",", with: "")
-                }
-                let bestNamesString = tempNames.joined(separator: " , ")
-                
                 if aiManager.aiAvailable {
-                    aiManager.currentSkill = skill
-                    await aiManager.getResponse(from: bestNamesString, mode: mode)
+                    aiManager.currentSkill = netManager.identifyMode
+                    ? aiManager.PlantInfoSkill
+                    : aiManager.PlantDiseaseSkill
+                    
+                    let mode = netManager.identifyMode ? "plant" : "plant disease"
+                    
+//                    let tempNames = netManager.displayNames.map {
+//                        $0.replacingOccurrences(of: ",", with: "")
+//                    }
+//                    let bestNamesString = tempNames.joined(separator: " , ")
+                    
+                    let tempName = netManager.displayNames.first ?? ""
+                    
+                    await aiManager.getResponse(from: tempName, mode: mode)
                     await netManager.updateInfo(newInfo: aiManager.aiReply)
                 }
             }

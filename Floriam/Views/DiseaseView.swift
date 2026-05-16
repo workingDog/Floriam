@@ -46,7 +46,7 @@ struct DiseaseView: View {
             if aiManager.aiAvailable {
                 isLoading = true
                 aiManager.currentSkill = aiManager.PlantDiseaseSkill
-                await aiManager.getResponse(from: description ?? "no info", mode: "disease")
+                await aiManager.getResponse(from: description ?? "no info", mode: "plant disease")
                 isLoading = false
             }
         }

@@ -1,6 +1,6 @@
 #  Floriam
 
-A basic app to identify a plant from a picture taken with the camera or from the Photos App. The app uses [Pl@ntNet API](https://my.plantnet.org/doc/api/openapi) to identify the plant in the picture. "The identification engine is based on most advanced deep learning technologies ..."
+A simple iOS app to identify a plant from a picture taken with the camera or from the Photos App. The app uses [Pl@ntNet API](https://my.plantnet.org/doc/api/openapi) to identify the plant or the plant disease in the picture, "The identification engine is based on most advanced deep learning technologies ..."
 
 <p float="left">
   <img src="picture2.png" width="333"  height="444" />
@@ -11,7 +11,7 @@ A basic app to identify a plant from a picture taken with the camera or from the
 
 First, tap the **gear icon**, enter your **PlantNet API key** and if available your **Google AI Gemini key** and save. 
 
-Optionally adjust how many images to keep in your **History**, the default is 10.
+Adjust how many images to keep in your **History**, the default is 10.
 
 Secondly, toggle the **Identify/Disease** to identify the **plant** or the **disease** from the picture. Google AI Gemini when available, can provide additional information about the disease.
 
@@ -47,4 +47,4 @@ See also
 #### Dependencies
 
 -    [GeminiKitAPI](https://github.com/workingDog/GeminiKitAPI) derived from the original repo [GeminiKit](https://github.com/guitaripod/GeminiKit)
--    [Textual](https://github.com/gonzalezreal/swift-markdown-ui)
+-    [Textual](https://github.com/gonzalezreal/swift-markdown-ui) to display Markdown

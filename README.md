@@ -9,9 +9,11 @@ A basic app to identify a plant from a picture taken with the camera or from the
 
 ## Usage
 
-First, tap the **gear icon**, enter your **API key**, and save. You can also optionally adjust how many images to keep in your **History**, the default is 10.
+First, tap the **gear icon**, enter your **PlantNet API key** and if available your **Google AI Gemini key** and save. 
 
-Secondly, toggle the **Identify/Disease** to identify the plant or the disease from the picture.
+Optionally adjust how many images to keep in your **History**, the default is 10.
+
+Secondly, toggle the **Identify/Disease** to identify the **plant** or the **disease** from the picture. Google AI Gemini when available, can provide additional information about the disease.
 
 Then, select the **Camera** or **Photos**.
 
@@ -22,6 +24,7 @@ When using the **Camera**, only the one picture is used to identify the plant.
 A long press on a picture will bring the **Share** panel.
 
 Tap on the results to get more information.
+
 
 ### References
 
@@ -37,4 +40,11 @@ See also
 
 ### Requirements
 
--   A valid **API key** is required. Create an account at [Pl@ntNet](https://my.plantnet.org/) to obtain one. A free account can be used.
+-   A valid **PlantNet API key** is required. Create an account at [Pl@ntNet](https://my.plantnet.org/) to obtain one. A free account can be used.
+
+-   Optionally, a **Google Gemini key**, see [Google AI key](https://ai.google.dev/gemini-api/docs/api-key). The AI is used to provide more information about any identified disease.
+
+#### Dependencies
+
+-    [GeminiKitAPI](https://github.com/workingDog/GeminiKitAPI) derived from the original repo [GeminiKit](https://github.com/guitaripod/GeminiKit)
+-    [Textual](https://github.com/gonzalezreal/swift-markdown-ui)

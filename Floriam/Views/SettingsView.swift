@@ -13,8 +13,10 @@ struct SettingsView: View {
     @Environment(\.dismiss) var dismiss
     
     @AppStorage("maxHistory") private var maxHistory = 10.0
-
-    @State private var theKey = ""
+    
+    @State private var showAIKey = false
+    @State private var showPlantKey = false
+    
     
     var body: some View {
         ZStack {
@@ -29,7 +31,7 @@ struct SettingsView: View {
                     .padding(5)
                     Spacer()
                 }.padding(8)
-
+                
                 VStack {
                     Text("Number of Photos to Keep").padding(10)
                     Text("\(Int(maxHistory))")
@@ -40,42 +42,35 @@ struct SettingsView: View {
                 
                 HStack {
                     Spacer()
-                    VStack (spacing: 20) {
-                        Text("Add your key from")
-                        Text("[Pl@ntNet](https://my.plantnet.org/)")
+                    Button(action: {showPlantKey = true}) {
+                        Text("Set PlantNet key").padding(15)
                     }
+                    .foregroundStyle(.white)
+                    .background(RoundedRectangle(cornerRadius: 12).fill(.green))
                     Spacer()
-                }.padding(.top, 20)
+                }
                 
-                CustomSecureField(password: $theKey)
-                    .foregroundStyle(.blue)
-                    .textFieldStyle(CustomTextFieldStyle())
-                    .padding(.top, 20)
-                    .padding(.horizontal, 8)
+                Divider()
                 
                 HStack {
                     Spacer()
-                    Button(action: doSaveKey ) {
-                        Text("Save").padding(10)
+                    Button(action: {showAIKey = true}) {
+                        Text("Set Google AI key").padding(15)
                     }
-                    .buttonStyle(.borderedProminent)
+                    .foregroundStyle(.white)
+                    .background(RoundedRectangle(cornerRadius: 12).fill(.green))
                     Spacer()
                 }
                 
                 Spacer()
             }
-            .onAppear {
-                theKey = KeychainInterface.getKey() ?? ""
+            .sheet(isPresented: $showAIKey) {
+                AIKeyView()
+            }
+            .sheet(isPresented: $showPlantKey) {
+                PlantKeyView()
             }
         }
     }
     
-    func doSaveKey() {
-        if KeychainInterface.getKey() == nil {
-            KeychainInterface.setKey(key: theKey)
-        } else {
-            KeychainInterface.updateKey(key: theKey)
-        }
-        dismiss()
-    }
 }

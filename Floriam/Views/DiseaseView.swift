@@ -6,37 +6,48 @@
 //
 import Foundation
 import SwiftUI
-import WebKit
+import GeminiKitAPI
 
 
 struct DiseaseView: View {
+    @Environment(AiManager.self) private var aiManager
+    
     let name: String?
     let description: String?
 
-    @State private var page = WebPage()
+    @State private var isLoading = false
 
     var body: some View {
         ZStack(alignment: .topLeading) {
             AppTheme.backGradient.ignoresSafeArea()
-            WebView(page)
-            if page.isLoading {
-                ProgressView()
-                    .progressViewStyle(.circular)
-                    .scaleEffect(2.0)
-                    .frame(maxWidth: .infinity, alignment: .center)
+            VStack {
+                VStack {
+                    Text(name ?? "no name").font(.title)
+                    Text(description ?? "no info").font(.title)
+                }
+                if aiManager.aiAvailable {
+                    MKView(text: aiManager.aiReply).padding(.top, 10)
+                } else {
+                    VStack {
+                        Text("No AI is available, check Settings")
+                        Text("Enter the required Google AI key")
+                    }.padding(.top, 20)
+                }
+                if isLoading {
+                    ProgressView()
+                        .progressViewStyle(.circular)
+                        .scaleEffect(2.0)
+                        .frame(maxWidth: .infinity, alignment: .center)
+                }
             }
         }
-        .navigationTitle("search for: \(name ?? "")")
         .task(id: name) {
-            guard let name else { return }
-            page.load(URLRequest(url: plantwiseURL(for: name)))
+            if aiManager.aiAvailable {
+                isLoading = true
+                await aiManager.getResponse(from: description ?? "no info")
+                isLoading = false
+            }
         }
     }
 
-    func plantwiseURL(for disease: String) -> URL {
-        var components = URLComponents(string: "https://plantwiseplusknowledgebank.org/search")!
-        components.queryItems = [URLQueryItem(name: "query", value: disease)]
-        return components.url!
-    }
 }
-

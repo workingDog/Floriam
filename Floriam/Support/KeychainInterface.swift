@@ -14,10 +14,43 @@ class KeychainInterface {
     // set these with your own values
     static var service = "ringow.com.floriam"
     static var account = "ringow.floriam.apikey"
+  
+    //------------------with a given password and account--------------------
     
+    static func savePassword(password: String, account: String) {
+        do {
+            let data = Data(password.utf8)
+            try save(password: data, service: service, account: account)
+        } catch {
+            print("---> error: \(error)")
+        }
+    }
+    
+    static func getPassword(account: String) -> String? {
+        do {
+            let data = try readPassword(service: service, account: account)
+            let str = String(data: data, encoding: .utf8)
+            return str
+        } catch {
+            return nil
+        }
+    }
+    
+    static func updatePassword(password: String, account: String) {
+        do {
+            let data = password.data(using: .utf8)!
+            try update(password: data, service: service, account: account)
+        } catch {
+            print("---> error: \(error)")
+        }
+    }
+    
+    static func deletePassword(account: String) throws {
+        try deletePassword(service: service, account: account)
+    }
 
     //------ convenience for api ---------------------------------
-    
+
     static func getKey() -> String? {
         getPassword()
     }

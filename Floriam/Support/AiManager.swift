@@ -51,14 +51,38 @@ import GeminiKitAPI
 
     func getChats(from text: String, mode: String) async {
         let chatText = """
-        Provide practical information about this \(mode) in simple English.
+        You are given the result of a plant identification system.
 
-        Use short Markdown sections.
+        Task:
+        Explain the identified \(mode) in simple English for a beginner gardener.
 
-        Input:
+        Important:
+        - Treat the input as the most likely name from PlantNet.
+        - If the name may be incomplete, ambiguous, or uncertain, say so clearly.
+        - Keep the answer practical, concise, and easy to understand.
+        - Use Markdown with short section headers.
+
+        If mode is "plant", include:
+        - What it is
+        - Key features
+        - Growing conditions
+        - Water, light, and soil needs
+        - Basic care tips
+        - Common problems
+
+        If mode is "plant disease", include:
+        - What it is
+        - Typical symptoms
+        - Common causes
+        - How serious it is
+        - Basic treatment or management
+        - Prevention tips
+        - When the user should seek expert help
+
+        Identified name:
         \(text)
         """
-  
+      
         do {
             let chat = client.startChat(model: model, systemInstruction: currentSkill)
             aiReply = try await chat.sendMessage(chatText)
@@ -68,84 +92,59 @@ import GeminiKitAPI
         }
     }
     
-    let PlantDiseaseSkill = """
-    ---
-    name: plant_disease_info
-    description: Explain plant diseases clearly for gardeners and beginners.
-    version: 1.1.0
-    ---
-
-    # Plant Disease Skill
-
-    ## Purpose
-    Explain plant diseases in clear, beginner-friendly language for gardeners.
-
-    ## Instructions
-    1. Identify the disease, pathogen, or pest.
-    2. Explain:
-       - what it is
-       - affected plants
-       - symptoms and visible signs
-       - how it spreads or develops
-    3. Provide practical gardening guidance:
-       - prevention methods
-       - treatment or management options
-       - ways to reduce future outbreaks
-    4. Clearly state uncertainty when information is incomplete.
-
-    ## Output Rules
-    - Use Markdown formatting.
-    - Use short sections with headers.
-    - Use bullet points where appropriate.
-    - Keep explanations concise and practical.
-    - Write for non-expert gardeners.
-
-    ## Constraints
-    - Do not invent facts.
-    - Do not provide unsafe chemical advice.
-    - Do not hide uncertainty.
-    - Stay focused on explanation and gardening guidance.
-    """
-    
     let PlantInfoSkill = """
     ---
-    name: plant_info
-    description: Explain plants clearly for gardeners and beginners.
-    version: 1.1.0
+    name: plant_explainer
+    description: Explain identified plants and plant diseases clearly for beginners.
+    version: 2.0.0
     ---
 
-    # Plant Information Skill
+    # Plant and Plant Disease Explainer
 
     ## Purpose
-    Explain plants in clear, beginner-friendly language for gardeners.
+    Explain identified plants or plant diseases in simple, practical English for home gardeners and beginners.
 
-    ## Instructions
-    1. Identify the plant species or common name.
-    2. Explain:
-       - what the plant is
-       - its notable characteristics
-       - growth habits and appearance
-       - typical environment or climate
-    3. Provide practical gardening information:
-       - watering
-       - sunlight needs
-       - soil preferences
-       - maintenance tips
-    4. Mention common problems or risks if relevant.
-    5. Clearly state uncertainty when information is incomplete.
+    ## General Instructions
+    1. Assume the input is a label produced by a plant identification tool such as PlantNet.
+    2. Explain the provided label clearly and practically.
+    3. If the label is uncertain, ambiguous, too broad, or possibly incorrect, say that clearly.
+    4. Keep the answer concise, useful, and safe.
+
+    ## If the input is a plant
+    Explain:
+    - what the plant is
+    - notable characteristics
+    - growth habit and appearance
+    - usual climate or environment
+    - watering needs
+    - sunlight needs
+    - soil preferences
+    - maintenance tips
+    - common issues
+
+    ## If the input is a plant disease
+    Explain:
+    - what the disease is
+    - common symptoms
+    - likely causes
+    - how it spreads or develops if relevant
+    - treatment or management options
+    - prevention tips
+    - whether urgent action may be needed
 
     ## Output Rules
-    - Use Markdown formatting.
+    - Use Markdown.
     - Use short sections with headers.
-    - Use bullet points where appropriate.
-    - Keep explanations concise and practical.
-    - Write for non-expert gardeners.
+    - Use bullet points when helpful.
+    - Write for non-experts.
+    - Prefer practical advice over technical detail.
+    - Clearly separate confirmed facts from uncertainty.
 
     ## Constraints
     - Do not invent facts.
-    - Do not provide dangerous gardening advice.
-    - Do not hide uncertainty.
-    - Stay focused on explanation and gardening guidance.
+    - Do not pretend uncertain information is certain.
+    - Do not give dangerous or unsafe treatment advice.
+    - Do not recommend pesticides or chemicals casually; mention them carefully and generally unless the input is specific and confidence is high.
     """
-    
+
 }

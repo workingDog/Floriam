@@ -226,20 +226,24 @@ struct ContentView: View {
                 await netManager.saveResult(imgArr)
                 
                 if aiManager.aiAvailable {
-                    aiManager.currentSkill = netManager.identifyMode
-                    ? aiManager.PlantInfoSkill
-                    : aiManager.PlantDiseaseSkill
+//                    aiManager.currentSkill = netManager.identifyMode
+//                    ? aiManager.PlantInfoSkill
+//                    : aiManager.PlantDiseaseSkill
+                    
+                    aiManager.currentSkill = aiManager.PlantInfoSkill
                     
                     let mode = netManager.identifyMode ? "plant" : "plant disease"
                     
+                    // tests with list of names
 //                    let tempNames = netManager.displayNames.map {
 //                        $0.replacingOccurrences(of: ",", with: "")
 //                    }
 //                    let bestNamesString = tempNames.joined(separator: " , ")
                     
-                    let tempName = netManager.displayNames.first ?? ""
+                    // just the top score name
+                    let topName = netManager.displayNames.first ?? ""
                     
-                    await aiManager.getResponse(from: tempName, mode: mode)
+                    await aiManager.getResponse(from: topName, mode: mode)
                     await netManager.updateInfo(newInfo: aiManager.aiReply)
                 }
             }

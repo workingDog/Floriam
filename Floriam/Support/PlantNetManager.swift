@@ -9,6 +9,11 @@ import SwiftUI
 import SwiftData
 
 
+//enum InfoMode {
+//    case plant
+//    case plantDisease
+//}
+
 @Observable class PlantNetManager {
     
     var maxHistory: Double {
@@ -98,6 +103,7 @@ import SwiftData
         var uniqueSet = Set<String>()
         
         for result in results {
+            // plant identification
             if identifyMode {
                 if let species = result.species {
                     if let name = species.scientificName {
@@ -108,6 +114,7 @@ import SwiftData
                     }
                 }
             } else {
+                // disease identification
 //                if let name = result.name {
 //                    uniqueSet.insert(name.trimLowercased())
 //                }
